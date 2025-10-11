@@ -7,7 +7,8 @@ A comprehensive multi-vendor e-commerce marketplace built with Laravel 11.x. Thi
 **Current Phase**: Phase 1 - Foundation & MVP Core  
 **Sprint**: Sprint 1 - Project Setup & Authentication  
 **Completion**: 90% ✅  
-**Branch Strategy**: 
+**Branch Strategy**:
+
 - `main` - Production-ready code (currently empty)
 - `integration` - Development branch (active development)
 
@@ -57,17 +58,20 @@ A comprehensive multi-vendor e-commerce marketplace built with Laravel 11.x. Thi
 ### Setup Steps
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/Yosores04/E-Commerce-Platform.git
    cd E-Commerce-Platform
    ```
 
 2. **Switch to integration branch**
+
    ```bash
    git checkout integration
    ```
 
 3. **Install dependencies**
+
    ```bash
    cd marketplace
    composer install
@@ -75,13 +79,16 @@ A comprehensive multi-vendor e-commerce marketplace built with Laravel 11.x. Thi
    ```
 
 4. **Environment configuration**
+
    ```bash
    cp .env.example .env
    php artisan key:generate
    ```
 
 5. **Configure database**
+
    - Update `.env` with your database credentials:
+
    ```env
    DB_DATABASE=marketplace
    DB_USERNAME=root
@@ -89,6 +96,7 @@ A comprehensive multi-vendor e-commerce marketplace built with Laravel 11.x. Thi
    ```
 
 6. **Run migrations and seeders**
+
    ```bash
    php artisan migrate
    php artisan db:seed --class=RolesAndPermissionsSeeder
@@ -133,6 +141,7 @@ The platform includes 35 database tables organized into:
 ## 🔐 Permissions
 
 30+ granular permissions including:
+
 - Product management (view, create, edit, delete)
 - Order management (view, create, edit, cancel, refund)
 - User management (view, create, edit, delete, ban)
@@ -145,23 +154,27 @@ The platform includes 35 database tables organized into:
 ## 🚧 Development Roadmap
 
 ### Phase 1: Foundation & MVP Core (Weeks 1-6)
+
 - ✅ Sprint 1: Project Setup & Authentication (90% complete)
 - ⏳ Sprint 2: Product Management API (Next)
 - ⏳ Sprint 3: Order & Payment System
 
 ### Phase 2: Advanced Features (Weeks 7-12)
+
 - Shopping cart & checkout
 - Review system
 - Vendor dashboard
 - Admin panel
 
 ### Phase 3: Enhancements (Weeks 13-18)
+
 - Search & filters
 - Notifications
 - Analytics
 - Performance optimization
 
 ### Phase 4: Polish & Launch (Weeks 19-22)
+
 - Testing
 - Documentation
 - Deployment
