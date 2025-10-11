@@ -83,10 +83,11 @@ class Product extends Model
         return $this->hasMany(ProductVariant::class);
     }
 
-    public function tags()
-    {
-        return $this->belongsToMany(ProductTag::class, 'product_tag_pivot');
-    }
+    // TODO: Create ProductTag model and migration
+    // public function tags()
+    // {
+    //     return $this->belongsToMany(ProductTag::class, 'product_tag_pivot');
+    // }
 
     public function reviews()
     {

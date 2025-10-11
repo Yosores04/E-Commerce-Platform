@@ -23,8 +23,8 @@ class ProductController extends Controller
             'vendor.user',
             'category',
             'images',
-            'variants',
-            'tags'
+            'variants'
+            // 'tags' // TODO: Add back when ProductTag model is created
         ])->active();
 
         // Filter by category
@@ -138,16 +138,17 @@ class ProductController extends Controller
             }
 
             // Handle tags if provided
-            if ($request->has('tags')) {
-                $product->tags()->sync($request->tags);
-            }
+            // TODO: Add back when ProductTag model is created
+            // if ($request->has('tags')) {
+            //     $product->tags()->sync($request->tags);
+            // }
 
             DB::commit();
 
             return response()->json([
                 'success' => true,
                 'message' => 'Product created successfully',
-                'data' => $product->load(['images', 'variants', 'tags', 'category', 'vendor'])
+                'data' => $product->load(['images', 'variants', 'category', 'vendor'])
             ], 201);
 
         } catch (\Exception $e) {
@@ -173,7 +174,7 @@ class ProductController extends Controller
             'category',
             'images',
             'variants',
-            'tags',
+            // 'tags', // TODO: Add back when ProductTag model is created
             'reviews.user'
         ])->findOrFail($id);
 
@@ -243,16 +244,17 @@ class ProductController extends Controller
             }
 
             // Update tags if provided
-            if ($request->has('tags')) {
-                $product->tags()->sync($request->tags);
-            }
+            // TODO: Add back when ProductTag model is created
+            // if ($request->has('tags')) {
+            //     $product->tags()->sync($request->tags);
+            // }
 
             DB::commit();
 
             return response()->json([
                 'success' => true,
                 'message' => 'Product updated successfully',
-                'data' => $product->fresh()->load(['images', 'variants', 'tags', 'category', 'vendor'])
+                'data' => $product->fresh()->load(['images', 'variants', 'category', 'vendor'])
             ]);
 
         } catch (\Exception $e) {

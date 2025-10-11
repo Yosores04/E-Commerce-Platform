@@ -5,7 +5,7 @@ Modern Vue.js 3 frontend for the IndoMarket multi-vendor e-commerce platform.
 ## Tech Stack
 
 - **Vue.js 3.5.13** - Progressive JavaScript framework with Composition API
-- **Vite 7.1.9** - Fast build tool and development server  
+- **Vite 7.1.9** - Fast build tool and development server
 - **Vue Router 4.5.1** - Official router for Vue.js
 - **Pinia 2.3.1** - State management (Vuex successor)
 - **Axios 1.7.9** - Promise-based HTTP client
@@ -18,7 +18,7 @@ Modern Vue.js 3 frontend for the IndoMarket multi-vendor e-commerce platform.
 ✅ **Shopping Cart** - Add/remove items, update quantities, real-time totals  
 ✅ **Responsive Layout** - Header, navigation, footer, mobile-friendly  
 ✅ **API Integration** - Axios interceptors, service layer, error handling  
-✅ **State Management** - Pinia stores for auth and cart  
+✅ **State Management** - Pinia stores for auth and cart
 
 ## Development
 
@@ -59,18 +59,18 @@ Update in `src/services/api.js` if needed.
 
 ## Routes
 
-| Path | Component | Access |
-|------|-----------|--------|
-| `/` | HomePage | Public |
-| `/products` | ProductsPage | Public |
-| `/products/:id` | ProductDetailPage | Public |
-| `/cart` | CartPage | Public |
-| `/checkout` | CheckoutPage | Auth Required |
-| `/orders` | OrdersPage | Auth Required |
-| `/login` | LoginPage | Guest Only |
-| `/register` | RegisterPage | Guest Only |
-| `/vendor/*` | Vendor Pages | Vendor Role |
-| `/admin/*` | Admin Pages | Admin Role |
+| Path            | Component         | Access        |
+| --------------- | ----------------- | ------------- |
+| `/`             | HomePage          | Public        |
+| `/products`     | ProductsPage      | Public        |
+| `/products/:id` | ProductDetailPage | Public        |
+| `/cart`         | CartPage          | Public        |
+| `/checkout`     | CheckoutPage      | Auth Required |
+| `/orders`       | OrdersPage        | Auth Required |
+| `/login`        | LoginPage         | Guest Only    |
+| `/register`     | RegisterPage      | Guest Only    |
+| `/vendor/*`     | Vendor Pages      | Vendor Role   |
+| `/admin/*`      | Admin Pages       | Admin Role    |
 
 ## Next Steps
 
