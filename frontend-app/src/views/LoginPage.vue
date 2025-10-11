@@ -1,20 +1,21 @@
 <template>
-  <div class="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+  <div class="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-accent-50/30 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-md w-full">
-      <div class="bg-white rounded-lg shadow-md p-8">
+      <div class="bg-white border border-neutral-100 rounded-2xl shadow-xl p-8">
         <!-- Logo & Title -->
         <div class="text-center mb-8">
-          <router-link to="/" class="inline-flex items-center space-x-2 mb-4">
-            <div class="w-12 h-12 bg-primary-600 rounded-lg flex items-center justify-center">
-              <span class="text-white font-bold text-2xl">IM</span>
+          <router-link to="/" class="inline-flex flex-col items-center space-y-3 mb-4">
+            <div class="w-16 h-16 bg-gradient-to-br from-primary-900 to-burgundy-900 rounded-xl flex items-center justify-center shadow-lg">
+              <span class="text-3xl font-bold font-['Playfair_Display'] text-gold-400">X</span>
             </div>
-            <span class="text-2xl font-bold text-gray-900">IndoMarket</span>
+            <span class="text-3xl font-bold font-['Playfair_Display'] bg-gradient-to-r from-primary-900 via-burgundy-900 to-primary-800 bg-clip-text text-transparent">Xerxia</span>
           </router-link>
-          <h2 class="text-2xl font-bold text-gray-900">Sign in to your account</h2>
+          <h2 class="text-2xl font-bold text-primary-900">Sign in to your account</h2>
+          <p class="text-sm text-neutral-500 mt-2">Elegance in every purchase</p>
         </div>
 
         <!-- Error Message -->
-        <div v-if="error" class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+        <div v-if="error" class="mb-4 p-4 bg-burgundy-50 border border-burgundy-200 text-burgundy-800 rounded-lg">
           {{ error }}
         </div>
 
@@ -22,25 +23,25 @@
         <form @submit.prevent="handleLogin">
           <div class="space-y-4">
             <div>
-              <label for="email" class="form-label">Email</label>
+              <label for="email" class="block text-sm font-semibold text-primary-900 mb-2">Email</label>
               <input
                 id="email"
                 v-model="form.email"
                 type="email"
                 required
-                class="form-input"
+                class="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-primary-900 focus:border-transparent transition-all"
                 placeholder="you@example.com"
               />
             </div>
 
             <div>
-              <label for="password" class="form-label">Password</label>
+              <label for="password" class="block text-sm font-semibold text-primary-900 mb-2">Password</label>
               <input
                 id="password"
                 v-model="form.password"
                 type="password"
                 required
-                class="form-input"
+                class="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-primary-900 focus:border-transparent transition-all"
                 placeholder="••••••••"
               />
             </div>
@@ -51,15 +52,15 @@
                   id="remember"
                   v-model="form.remember"
                   type="checkbox"
-                  class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                  class="h-4 w-4 text-primary-900 focus:ring-primary-900 border-neutral-300 rounded"
                 />
-                <label for="remember" class="ml-2 block text-sm text-gray-900">
+                <label for="remember" class="ml-2 block text-sm text-neutral-700">
                   Remember me
                 </label>
               </div>
 
               <div class="text-sm">
-                <a href="#" class="font-medium text-primary-600 hover:text-primary-500">
+                <a href="#" class="font-medium text-primary-900 hover:text-gold-500 transition-colors">
                   Forgot password?
                 </a>
               </div>
@@ -68,10 +69,13 @@
             <button
               type="submit"
               :disabled="isLoading"
-              class="w-full btn-primary disabled:opacity-50"
+              class="w-full bg-gradient-to-r from-primary-900 via-burgundy-900 to-primary-800 text-white font-semibold py-3 px-4 rounded-lg hover:from-primary-800 hover:via-burgundy-800 hover:to-primary-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
             >
               <span v-if="isLoading" class="flex items-center justify-center">
-                <div class="spinner mr-2"></div>
+                <svg class="animate-spin h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
                 Signing in...
               </span>
               <span v-else>Sign in</span>
@@ -81,9 +85,9 @@
 
         <!-- Register Link -->
         <div class="mt-6 text-center">
-          <p class="text-sm text-gray-600">
+          <p class="text-sm text-neutral-600">
             Don't have an account?
-            <router-link to="/register" class="font-medium text-primary-600 hover:text-primary-500">
+            <router-link to="/register" class="font-semibold text-primary-900 hover:text-gold-500 transition-colors">
               Register here
             </router-link>
           </p>
