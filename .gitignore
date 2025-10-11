@@ -1,0 +1,43 @@
+# Laravel specific
+/marketplace/vendor/
+/marketplace/node_modules/
+/marketplace/public/hot
+/marketplace/public/storage
+/marketplace/storage/*.key
+/marketplace/.env
+/marketplace/.env.backup
+/marketplace/.env.production
+/marketplace/.phpunit.result.cache
+/marketplace/Homestead.json
+/marketplace/Homestead.yaml
+/marketplace/auth.json
+/marketplace/npm-debug.log
+/marketplace/yarn-error.log
+/marketplace/.fleet
+/marketplace/.idea
+/marketplace/.vscode
+
+# Laravel storage
+/marketplace/storage/framework/cache/data/*
+/marketplace/storage/framework/sessions/*
+/marketplace/storage/framework/views/*
+/marketplace/storage/logs/*
+
+# Keep directory structure
+!/marketplace/storage/app/.gitignore
+!/marketplace/storage/framework/.gitignore
+!/marketplace/storage/logs/.gitignore
+
+# OS specific
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE
+*.sublime-project
+*.sublime-workspace
+.vscode/
+.idea/
+*.iml
