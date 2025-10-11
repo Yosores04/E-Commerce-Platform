@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\VendorController;
+use App\Http\Controllers\Api\ImageUploadController;
 use App\Models\Order;
 
 /*
@@ -98,6 +99,32 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/{id}', [OrderController::class, 'show']); // Order details
         Route::post('/{id}/cancel', [OrderController::class, 'cancel']); // Cancel order
         Route::post('/{id}/refund', [OrderController::class, 'requestRefund']); // Request refund
+    });
+
+    // ========================================
+    // IMAGE UPLOAD ROUTES
+    // ========================================
+    
+    Route::prefix('upload')->group(function () {
+        // User Avatar
+        Route::post('/avatar', [ImageUploadController::class, 'uploadAvatar']);
+        
+        // Product Images (Vendor/Admin)
+        Route::post('/product-image', [ImageUploadController::class, 'uploadProductImage']);
+        Route::post('/product-images', [ImageUploadController::class, 'uploadProductImages']);
+        
+        // Vendor Assets (Vendor/Admin)
+        Route::post('/vendor-logo', [ImageUploadController::class, 'uploadVendorLogo']);
+        Route::post('/vendor-banner', [ImageUploadController::class, 'uploadVendorBanner']);
+        
+        // Category Images (Admin)
+        Route::post('/category-image', [ImageUploadController::class, 'uploadCategoryImage']);
+        
+        // Review Images (Customer)
+        Route::post('/review-image', [ImageUploadController::class, 'uploadReviewImage']);
+        
+        // Delete Image
+        Route::delete('/image', [ImageUploadController::class, 'deleteImage']);
     });
 
     // ========================================
