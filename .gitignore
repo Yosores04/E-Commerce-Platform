@@ -28,6 +28,10 @@
 !/marketplace/storage/framework/.gitignore
 !/marketplace/storage/logs/.gitignore
 
+# Documentation (keep local only)
+*.md
+!README.md
+
 # OS specific
 .DS_Store
 Thumbs.db
