@@ -19,8 +19,8 @@ class CategoriesSeeder extends Seeder
                 'slug' => 'electronics',
                 'description' => 'Latest electronics and gadgets',
                 'icon' => '📱',
-                'is_active' => true,
-                'sort_order' => 1,
+                'status' => 'active',
+                'order' => 1,
                 'children' => [
                     ['name' => 'Smartphones', 'slug' => 'smartphones', 'icon' => '📱'],
                     ['name' => 'Laptops', 'slug' => 'laptops', 'icon' => '💻'],
@@ -35,8 +35,8 @@ class CategoriesSeeder extends Seeder
                 'slug' => 'fashion',
                 'description' => 'Trendy fashion and apparel',
                 'icon' => '👔',
-                'is_active' => true,
-                'sort_order' => 2,
+                'status' => 'active',
+                'order' => 2,
                 'children' => [
                     ['name' => 'Men\'s Clothing', 'slug' => 'mens-clothing', 'icon' => '👔'],
                     ['name' => 'Women\'s Clothing', 'slug' => 'womens-clothing', 'icon' => '👗'],
@@ -51,8 +51,8 @@ class CategoriesSeeder extends Seeder
                 'slug' => 'home-living',
                 'description' => 'Everything for your home',
                 'icon' => '🏠',
-                'is_active' => true,
-                'sort_order' => 3,
+                'status' => 'active',
+                'order' => 3,
                 'children' => [
                     ['name' => 'Furniture', 'slug' => 'furniture', 'icon' => '🛋️'],
                     ['name' => 'Kitchen', 'slug' => 'kitchen', 'icon' => '🍳'],
@@ -66,8 +66,8 @@ class CategoriesSeeder extends Seeder
                 'slug' => 'beauty-health',
                 'description' => 'Beauty and health products',
                 'icon' => '💄',
-                'is_active' => true,
-                'sort_order' => 4,
+                'status' => 'active',
+                'order' => 4,
                 'children' => [
                     ['name' => 'Skincare', 'slug' => 'skincare', 'icon' => '🧴'],
                     ['name' => 'Makeup', 'slug' => 'makeup', 'icon' => '💄'],
@@ -81,8 +81,8 @@ class CategoriesSeeder extends Seeder
                 'slug' => 'sports-outdoors',
                 'description' => 'Sports equipment and outdoor gear',
                 'icon' => '⚽',
-                'is_active' => true,
-                'sort_order' => 5,
+                'status' => 'active',
+                'order' => 5,
                 'children' => [
                     ['name' => 'Exercise Equipment', 'slug' => 'exercise-equipment', 'icon' => '🏋️'],
                     ['name' => 'Camping', 'slug' => 'camping', 'icon' => '⛺'],
@@ -96,8 +96,8 @@ class CategoriesSeeder extends Seeder
                 'slug' => 'books-media',
                 'description' => 'Books, music, and entertainment',
                 'icon' => '📚',
-                'is_active' => true,
-                'sort_order' => 6,
+                'status' => 'active',
+                'order' => 6,
                 'children' => [
                     ['name' => 'Books', 'slug' => 'books', 'icon' => '📖'],
                     ['name' => 'E-books', 'slug' => 'ebooks', 'icon' => '📱'],
@@ -111,8 +111,8 @@ class CategoriesSeeder extends Seeder
                 'slug' => 'toys-kids',
                 'description' => 'Toys and products for children',
                 'icon' => '🧸',
-                'is_active' => true,
-                'sort_order' => 7,
+                'status' => 'active',
+                'order' => 7,
                 'children' => [
                     ['name' => 'Toys', 'slug' => 'toys', 'icon' => '🧸'],
                     ['name' => 'Baby Products', 'slug' => 'baby-products', 'icon' => '👶'],
@@ -125,8 +125,8 @@ class CategoriesSeeder extends Seeder
                 'slug' => 'automotive',
                 'description' => 'Car parts and accessories',
                 'icon' => '🚗',
-                'is_active' => true,
-                'sort_order' => 8,
+                'status' => 'active',
+                'order' => 8,
                 'children' => [
                     ['name' => 'Car Parts', 'slug' => 'car-parts', 'icon' => '🔧'],
                     ['name' => 'Car Accessories', 'slug' => 'car-accessories', 'icon' => '🚗'],
@@ -144,7 +144,7 @@ class CategoriesSeeder extends Seeder
 
             foreach ($children as $childData) {
                 $childData['parent_id'] = $category->id;
-                $childData['is_active'] = true;
+                $childData['status'] = true;
                 Category::create($childData);
             }
         }
