@@ -1,24 +1,24 @@
 <template>
-  <!-- Modern Header with Glassmorphism -->
-  <header class="sticky top-0 z-50 backdrop-blur-xl bg-white/80 border-b border-neutral-200/50 shadow-soft">
-    <!-- Top bar with gradient background -->
-    <div class="bg-gradient-to-r from-primary-600 via-primary-500 to-accent-500 text-white">
+  <!-- Xerxia Header with Wine & White Smoke Theme -->
+  <header class="sticky top-0 z-50 backdrop-blur-xl bg-white/90 border-b border-neutral-200/50 shadow-soft">
+    <!-- Top bar with elegant Wine gradient -->
+    <div class="bg-gradient-to-r from-primary-900 via-primary-800 to-burgundy-900 text-neutral-50">
       <div class="container mx-auto px-4 py-2.5">
         <div class="flex justify-between items-center text-sm font-medium">
           <div class="flex items-center space-x-6">
             <span class="flex items-center space-x-2">
-              <SparklesIcon class="w-4 h-4" />
-              <span>Welcome to IndoMarket</span>
+              <SparklesIcon class="w-4 h-4 text-gold-400" />
+              <span>Welcome to Xerxia Marketplace</span>
             </span>
-            <span class="hidden md:flex items-center space-x-1 text-primary-100">
+            <span class="hidden md:flex items-center space-x-1 text-neutral-100">
               <TruckIcon class="w-4 h-4" />
-              <span>Free shipping on orders over $50</span>
+              <span>Free shipping on orders over ₱2,500</span>
             </span>
           </div>
           <div class="flex items-center space-x-4">
             <template v-if="authStore.isAuthenticated">
               <Menu as="div" class="relative">
-                <MenuButton class="flex items-center space-x-2 hover:text-primary-100 transition-colors">
+                <MenuButton class="flex items-center space-x-2 hover:text-gold-300 transition-colors">
                   <UserCircleIcon class="w-5 h-5" />
                   <span>{{ authStore.user?.name }}</span>
                   <ChevronDownIcon class="w-4 h-4" />
@@ -37,7 +37,7 @@
                         <router-link
                           to="/vendor/dashboard"
                           :class="[
-                            active ? 'bg-primary-50 text-primary-700' : 'text-neutral-700',
+                            active ? 'bg-primary-50 text-primary-900' : 'text-neutral-700',
                             'group flex items-center w-full px-3 py-2 text-sm rounded-lg transition-colors'
                           ]"
                         >
@@ -49,7 +49,7 @@
                         <router-link
                           to="/admin/dashboard"
                           :class="[
-                            active ? 'bg-primary-50 text-primary-700' : 'text-neutral-700',
+                            active ? 'bg-primary-50 text-primary-900' : 'text-neutral-700',
                             'group flex items-center w-full px-3 py-2 text-sm rounded-lg transition-colors'
                           ]"
                         >
@@ -61,7 +61,7 @@
                         <router-link
                           to="/profile"
                           :class="[
-                            active ? 'bg-primary-50 text-primary-700' : 'text-neutral-700',
+                            active ? 'bg-primary-50 text-primary-900' : 'text-neutral-700',
                             'group flex items-center w-full px-3 py-2 text-sm rounded-lg transition-colors'
                           ]"
                         >
@@ -88,13 +88,13 @@
               </Menu>
             </template>
             <template v-else>
-              <router-link to="/login" class="hover:text-primary-100 transition-colors flex items-center space-x-1">
+              <router-link to="/login" class="hover:text-gold-300 transition-colors flex items-center space-x-1">
                 <ArrowRightOnRectangleIcon class="w-4 h-4" />
                 <span>Login</span>
               </router-link>
               <router-link 
                 to="/register" 
-                class="bg-white/20 hover:bg-white/30 px-4 py-1.5 rounded-lg transition-all backdrop-blur-sm"
+                class="bg-gold-500/20 hover:bg-gold-500/30 px-4 py-1.5 rounded-lg transition-all backdrop-blur-sm border border-gold-500/30"
               >
                 Register
               </router-link>
@@ -107,37 +107,37 @@
     <!-- Main header -->
     <div class="container mx-auto px-4 py-5">
       <div class="flex items-center justify-between gap-8">
-        <!-- Logo with modern gradient -->
+        <!-- Xerxia Logo with elegant Wine theme -->
         <router-link to="/" class="flex items-center space-x-3 group">
           <div class="relative">
-            <div class="absolute inset-0 bg-gradient-to-br from-primary-600 to-accent-500 rounded-2xl blur-sm opacity-50 group-hover:opacity-75 transition-opacity"></div>
-            <div class="relative w-12 h-12 bg-gradient-to-br from-primary-600 to-accent-500 rounded-2xl flex items-center justify-center shadow-glow">
-              <ShoppingBagIcon class="w-7 h-7 text-white" />
+            <div class="absolute inset-0 bg-gradient-to-br from-primary-900 to-burgundy-900 rounded-2xl blur-sm opacity-50 group-hover:opacity-75 transition-opacity"></div>
+            <div class="relative w-12 h-12 bg-gradient-to-br from-primary-900 to-burgundy-900 rounded-2xl flex items-center justify-center shadow-glow">
+              <span class="text-gold-400 font-bold text-2xl font-display">X</span>
             </div>
           </div>
           <div>
-            <span class="text-2xl font-bold bg-gradient-to-r from-primary-600 to-accent-500 bg-clip-text text-transparent">
-              IndoMarket
+            <span class="text-2xl font-bold font-display bg-gradient-to-r from-primary-900 via-burgundy-900 to-primary-800 bg-clip-text text-transparent">
+              Xerxia
             </span>
-            <p class="text-xs text-neutral-500 -mt-1">Shop smarter, live better</p>
+            <p class="text-xs text-neutral-500 -mt-1">Elegance in every purchase</p>
           </div>
         </router-link>
 
-        <!-- Modern Search bar with glassmorphism -->
+        <!-- Elegant Search bar with Wine theme -->
         <div class="flex-1 max-w-2xl">
           <form @submit.prevent="handleSearch" class="relative group">
-            <div class="absolute inset-0 bg-gradient-to-r from-primary-500 to-accent-500 rounded-2xl blur opacity-0 group-hover:opacity-20 transition-opacity"></div>
+            <div class="absolute inset-0 bg-gradient-to-r from-primary-900 to-burgundy-900 rounded-2xl blur opacity-0 group-hover:opacity-20 transition-opacity"></div>
             <div class="relative flex items-center">
               <MagnifyingGlassIcon class="absolute left-4 w-5 h-5 text-neutral-400" />
               <input
                 v-model="searchQuery"
                 type="text"
                 placeholder="Search for products, brands, and more..."
-                class="w-full pl-12 pr-32 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all placeholder:text-neutral-400"
+                class="w-full pl-12 pr-32 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-900 focus:border-transparent transition-all placeholder:text-neutral-400"
               />
               <button
                 type="submit"
-                class="absolute right-2 bg-gradient-to-r from-primary-600 to-accent-500 text-white px-6 py-2.5 rounded-xl hover:shadow-glow transition-all duration-300 font-medium flex items-center space-x-2"
+                class="absolute right-2 bg-gradient-to-r from-primary-900 to-burgundy-900 text-white px-6 py-2.5 rounded-xl hover:shadow-glow transition-all duration-300 font-medium flex items-center space-x-2"
               >
                 <span>Search</span>
                 <ArrowRightIcon class="w-4 h-4" />
@@ -146,7 +146,7 @@
           </form>
         </div>
 
-        <!-- Cart & User Actions -->
+        <!-- Cart & User Actions with Wine theme -->
         <div class="flex items-center space-x-4">
           <!-- Orders -->
           <router-link 
@@ -155,9 +155,9 @@
             class="flex flex-col items-center p-2 rounded-xl hover:bg-primary-50 transition-colors group"
           >
             <div class="relative">
-              <DocumentTextIcon class="w-6 h-6 text-neutral-600 group-hover:text-primary-600 transition-colors" />
+              <DocumentTextIcon class="w-6 h-6 text-neutral-600 group-hover:text-primary-900 transition-colors" />
             </div>
-            <span class="text-xs text-neutral-600 group-hover:text-primary-600 transition-colors mt-1">Orders</span>
+            <span class="text-xs text-neutral-600 group-hover:text-primary-900 transition-colors mt-1">Orders</span>
           </router-link>
 
           <!-- Cart with animated badge -->
@@ -166,7 +166,7 @@
             class="relative flex flex-col items-center p-2 rounded-xl hover:bg-primary-50 transition-colors group"
           >
             <div class="relative">
-              <ShoppingCartIcon class="w-6 h-6 text-neutral-600 group-hover:text-primary-600 transition-colors" />
+              <ShoppingCartIcon class="w-6 h-6 text-neutral-600 group-hover:text-primary-900 transition-colors" />
               <transition
                 enter-active-class="transition duration-200 ease-out"
                 enter-from-class="transform scale-0"
@@ -177,24 +177,24 @@
               >
                 <span 
                   v-if="cartStore.itemCount > 0"
-                  class="absolute -top-2 -right-2 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-lg animate-scale-in"
+                  class="absolute -top-2 -right-2 bg-gradient-to-r from-burgundy-600 to-primary-900 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-lg animate-scale-in"
                 >
                   {{ cartStore.itemCount }}
                 </span>
               </transition>
             </div>
-            <span class="text-xs text-neutral-600 group-hover:text-primary-600 transition-colors mt-1">Cart</span>
+            <span class="text-xs text-neutral-600 group-hover:text-primary-900 transition-colors mt-1">Cart</span>
           </router-link>
         </div>
       </div>
 
-      <!-- Modern Navigation -->
+      <!-- Elegant Navigation -->
       <nav class="mt-6 pt-4 border-t border-neutral-200/50">
         <ul class="flex items-center space-x-1">
           <li>
             <router-link 
               to="/" 
-              class="px-4 py-2 rounded-lg text-neutral-700 hover:bg-primary-50 hover:text-primary-700 transition-all font-medium flex items-center space-x-2"
+              class="px-4 py-2 rounded-lg text-neutral-700 hover:bg-primary-50 hover:text-primary-900 transition-all font-medium flex items-center space-x-2"
             >
               <HomeIcon class="w-4 h-4" />
               <span>Home</span>
@@ -203,7 +203,7 @@
           <li>
             <router-link 
               to="/products" 
-              class="px-4 py-2 rounded-lg text-neutral-700 hover:bg-primary-50 hover:text-primary-700 transition-all font-medium"
+              class="px-4 py-2 rounded-lg text-neutral-700 hover:bg-primary-50 hover:text-primary-900 transition-all font-medium"
             >
               All Products
             </router-link>
@@ -212,7 +212,7 @@
           <!-- Categories Dropdown -->
           <li>
             <Menu as="div" class="relative">
-              <MenuButton class="px-4 py-2 rounded-lg text-neutral-700 hover:bg-primary-50 hover:text-primary-700 transition-all font-medium flex items-center space-x-1">
+              <MenuButton class="px-4 py-2 rounded-lg text-neutral-700 hover:bg-primary-50 hover:text-primary-900 transition-all font-medium flex items-center space-x-1">
                 <span>Categories</span>
                 <ChevronDownIcon class="w-4 h-4" />
               </MenuButton>
@@ -230,7 +230,7 @@
                       <a
                         href="#"
                         :class="[
-                          active ? 'bg-primary-50 text-primary-700' : 'text-neutral-700',
+                          active ? 'bg-primary-50 text-primary-900' : 'text-neutral-700',
                           'block px-4 py-3 text-sm rounded-lg transition-colors'
                         ]"
                       >
@@ -241,7 +241,7 @@
                       <a
                         href="#"
                         :class="[
-                          active ? 'bg-primary-50 text-primary-700' : 'text-neutral-700',
+                          active ? 'bg-primary-50 text-primary-900' : 'text-neutral-700',
                           'block px-4 py-3 text-sm rounded-lg transition-colors'
                         ]"
                       >
@@ -252,7 +252,7 @@
                       <a
                         href="#"
                         :class="[
-                          active ? 'bg-primary-50 text-primary-700' : 'text-neutral-700',
+                          active ? 'bg-primary-50 text-primary-900' : 'text-neutral-700',
                           'block px-4 py-3 text-sm rounded-lg transition-colors'
                         ]"
                       >
@@ -266,14 +266,14 @@
           </li>
           
           <li>
-            <a href="#" class="px-4 py-2 rounded-lg text-neutral-700 hover:bg-primary-50 hover:text-primary-700 transition-all font-medium flex items-center space-x-2">
-              <SparklesIcon class="w-4 h-4" />
+            <a href="#" class="px-4 py-2 rounded-lg text-neutral-700 hover:bg-primary-50 hover:text-primary-900 transition-all font-medium flex items-center space-x-2">
+              <SparklesIcon class="w-4 h-4 text-gold-500" />
               <span>New Arrivals</span>
             </a>
           </li>
           <li>
-            <a href="#" class="px-4 py-2 rounded-lg text-neutral-700 hover:bg-primary-50 hover:text-primary-700 transition-all font-medium flex items-center space-x-2">
-              <FireIcon class="w-4 h-4" />
+            <a href="#" class="px-4 py-2 rounded-lg text-neutral-700 hover:bg-primary-50 hover:text-primary-900 transition-all font-medium flex items-center space-x-2">
+              <FireIcon class="w-4 h-4 text-burgundy-600" />
               <span>Best Sellers</span>
             </a>
           </li>

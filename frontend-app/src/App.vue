@@ -3,13 +3,13 @@ import { RouterView } from 'vue-router'
 </script>
 
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-primary-50/30">
+  <div class="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-accent-50/30">
     <RouterView />
   </div>
 </template>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;500;600;700;800;900&display=swap');
 
 #app {
   min-height: 100vh;
@@ -18,22 +18,22 @@ import { RouterView } from 'vue-router'
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Custom scrollbar */
+/* Elegant scrollbar with Wine theme */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: #F7F4F3;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #8b5cf6 0%, #06b6d4 100%);
-  border-radius: 4px;
+  background: linear-gradient(180deg, #5B2333 0%, #a02b48 100%);
+  border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #7c3aed 0%, #0891b2 100%);
+  background: linear-gradient(180deg, #3d1722 0%, #5B2333 100%);
 }
 </style>

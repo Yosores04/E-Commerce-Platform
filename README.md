@@ -1,12 +1,24 @@
-# E-Commerce Marketplace Platform
+# Xerxia - Premium E-Commerce Marketplace
 
-A comprehensive multi-vendor e-commerce marketplace built with Laravel 11.x. This platform allows multiple vendors to sell their products while providing customers with a seamless shopping experience.
+**Elegance in every purchase** ✨
+
+A comprehensive multi-vendor e-commerce marketplace built with Laravel 11.x and Vue.js 3. Xerxia provides a premium shopping experience where curated vendors showcase quality products to discerning customers.
+
+## 🎨 Brand Identity
+
+- **Name**: Xerxia
+- **Tagline**: Elegance in every purchase
+- **Primary Color**: Wine (#5B2333)
+- **Secondary Color**: White Smoke (#F7F4F3)
+- **Accent Colors**: Gold, Burgundy, Rose Gold, Champagne
+- **Typography**: Inter (body), Playfair Display (headings)
+- **Currency**: Philippine Peso (₱)
 
 ## 🚀 Project Status
 
 **Current Phase**: Phase 1 - Foundation & MVP Core  
-**Sprint**: Sprint 1 - Project Setup & Authentication  
-**Completion**: 90% ✅  
+**Sprint**: Sprint 2 - UI Modernization & Xerxia Rebranding  
+**Completion**: 95% ✅  
 **Branch Strategy**:
 
 - `main` - Production-ready code (currently empty)
@@ -17,8 +29,11 @@ A comprehensive multi-vendor e-commerce marketplace built with Laravel 11.x. Thi
 ### Implemented ✅
 
 - **Complete Database Architecture** - 35 tables with proper relationships
-- **Authentication System** - Laravel Sanctum API authentication
+- **Authentication System** - Laravel Sanctum API authentication with session support
 - **Authorization System** - Role-based access control (4 roles, 30+ permissions)
+- **Modern Frontend UI** - Vue.js 3.5 + Tailwind CSS 3.4 with Xerxia design system
+- **Design System** - Wine & White Smoke color palette with elegant gradients
+- **UI Components** - Headless UI + Hero Icons integration
 - **Multi-Vendor Support** - Vendor registration, approval workflow, payout tracking
 - **Product Management** - Products, variants, images, categories, tags
 - **Order Management** - Orders, payments, refunds, shipping
@@ -26,25 +41,35 @@ A comprehensive multi-vendor e-commerce marketplace built with Laravel 11.x. Thi
 - **Shopping Features** - Cart, wishlist, addresses, coupons
 - **Inventory Tracking** - Stock management, inventory logs
 - **System Features** - Notifications, messaging, audit logs, settings
+- **Currency System** - Philippine Peso (₱) with proper formatting
 
 ### In Progress 🔄
 
-- API Controllers (Auth, Products, Orders, etc.)
-- API Routes with middleware
-- Form Request validators
-- File storage configuration
-- Search functionality (Laravel Scout + Meilisearch)
+- Authentication Pages (Login/Register) with Xerxia theme
+- Product Listing & Detail Pages
+- Advanced search and filtering
+- Order tracking and management pages
 
 ## 🛠️ Tech Stack
 
-- **Backend**: Laravel 11.x
+### Backend
+
+- **Framework**: Laravel 11.x
 - **Database**: MySQL 8.0
-- **Authentication**: Laravel Sanctum
+- **Authentication**: Laravel Sanctum (API + Session)
 - **Authorization**: Spatie Laravel Permission
-- **Search**: Laravel Scout (planned)
 - **Cache/Queue**: Database driver (Redis optional)
 - **Storage**: Local (S3 planned)
-- **Frontend**: TBD (Inertia + Vue 3 recommended)
+
+### Frontend
+
+- **Framework**: Vue.js 3.5.13 + Vite 7.1.9
+- **Styling**: Tailwind CSS 3.4.17
+- **UI Components**: Headless UI 2.2.0
+- **Icons**: Hero Icons 2.2.0
+- **State Management**: Pinia 3.0.3
+- **HTTP Client**: Axios 1.12.2
+- **Routing**: Vue Router 4.5.1
 
 ## 📦 Installation
 
@@ -73,8 +98,12 @@ A comprehensive multi-vendor e-commerce marketplace built with Laravel 11.x. Thi
 3. **Install dependencies**
 
    ```bash
+   # Backend dependencies
    cd marketplace
    composer install
+
+   # Frontend dependencies
+   cd ../frontend-app
    npm install
    ```
 
@@ -103,11 +132,21 @@ A comprehensive multi-vendor e-commerce marketplace built with Laravel 11.x. Thi
    ```
 
 7. **Start development server**
+
    ```bash
+   # Terminal 1: Start Laravel backend
+   cd marketplace
    php artisan serve
+   # Backend runs on http://127.0.0.1:8000
+
+   # Terminal 2: Start Vue.js frontend
+   cd frontend-app
+   npm run dev
+   # Frontend runs on http://localhost:5173
    ```
 
-Visit: `http://localhost:8000`
+Visit the application: `http://localhost:5173`  
+API Backend: `http://127.0.0.1:8000`
 
 ## 📚 Documentation
 
@@ -115,6 +154,8 @@ Visit: `http://localhost:8000`
 - **[PROGRESS.md](PROGRESS.md)** - Detailed progress tracking
 - **[SETUP.md](SETUP.md)** - Comprehensive setup guide
 - **[MIGRATION_SUMMARY.md](MIGRATION_SUMMARY.md)** - Database migration details
+- **[UI_MODERNIZATION.md](UI_MODERNIZATION.md)** - UI/UX design documentation
+- **[WHATS_NEW.md](WHATS_NEW.md)** - Latest features and updates
 
 ## 🗄️ Database Schema
 
@@ -155,16 +196,17 @@ The platform includes 35 database tables organized into:
 
 ### Phase 1: Foundation & MVP Core (Weeks 1-6)
 
-- ✅ Sprint 1: Project Setup & Authentication (90% complete)
-- ⏳ Sprint 2: Product Management API (Next)
-- ⏳ Sprint 3: Order & Payment System
+- ✅ Sprint 1: Project Setup & Authentication (100% complete)
+- ✅ Sprint 2: UI Modernization & Xerxia Rebranding (95% complete)
+- ⏳ Sprint 3: Product Management & Cart System (Next)
 
 ### Phase 2: Advanced Features (Weeks 7-12)
 
-- Shopping cart & checkout
-- Review system
+- Complete shopping cart & checkout flow
+- Product detail pages with reviews
 - Vendor dashboard
 - Admin panel
+- Order management system
 
 ### Phase 3: Enhancements (Weeks 13-18)
 
@@ -209,8 +251,9 @@ git push origin feature/your-feature-name
 
 ## 🐛 Known Issues
 
-- Redis PHP extension not installed (using database driver as fallback)
 - Search functionality pending (Meilisearch configuration needed)
+- Product images need CDN integration for production
+- Email notifications pending SMTP configuration
 
 ## 📄 License
 
@@ -222,6 +265,7 @@ For questions or support, please contact the project maintainer.
 
 ---
 
-**Last Updated**: January 11, 2025  
-**Version**: v0.1.0-alpha  
-**Status**: Active Development 🚀
+**Last Updated**: October 11, 2025  
+**Version**: v0.2.0-alpha  
+**Status**: Active Development 🚀  
+**Brand**: Xerxia - Elegance in every purchase ✨

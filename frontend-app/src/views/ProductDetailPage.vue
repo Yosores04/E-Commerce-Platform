@@ -33,9 +33,9 @@
           </div>
 
           <div class="mb-6">
-            <p class="text-4xl font-bold text-primary-600">Rp {{ formatPrice(product.price) }}</p>
+            <p class="text-4xl font-bold text-primary-600">₱{{ formatPrice(product.price) }}</p>
             <p v-if="product.compare_price" class="text-xl text-gray-500 line-through">
-              Rp {{ formatPrice(product.compare_price) }}
+              ₱{{ formatPrice(product.compare_price) }}
             </p>
           </div>
 
@@ -114,7 +114,7 @@ const loadProduct = async () => {
 }
 
 const formatPrice = (price) => {
-  return new Intl.NumberFormat('id-ID').format(price)
+  return new Intl.NumberFormat('en-PH').format(price)
 }
 
 const addToCart = async () => {

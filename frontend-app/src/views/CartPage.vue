@@ -32,7 +32,7 @@
                 <h3 class="font-semibold text-gray-900">{{ item.product?.name }}</h3>
                 <p class="text-sm text-gray-600">{{ item.product?.vendor?.shop_name }}</p>
                 <p class="text-lg font-bold text-primary-600 mt-2">
-                  Rp {{ formatPrice(item.price) }}
+                  ₱{{ formatPrice(item.price) }}
                 </p>
               </div>
               <div class="flex items-center space-x-2">
@@ -69,23 +69,23 @@
             <div class="space-y-3 mb-4">
               <div class="flex justify-between text-gray-700">
                 <span>Subtotal</span>
-                <span>Rp {{ formatPrice(cartStore.subtotal) }}</span>
+                <span>₱{{ formatPrice(cartStore.subtotal) }}</span>
               </div>
               <div class="flex justify-between text-gray-700">
                 <span>Shipping</span>
-                <span>Rp {{ formatPrice(cartStore.shipping) }}</span>
+                <span>₱{{ formatPrice(cartStore.shipping) }}</span>
               </div>
               <div class="flex justify-between text-gray-700">
                 <span>Tax</span>
-                <span>Rp {{ formatPrice(cartStore.tax) }}</span>
+                <span>₱{{ formatPrice(cartStore.tax) }}</span>
               </div>
               <div v-if="cartStore.discount > 0" class="flex justify-between text-green-600">
                 <span>Discount</span>
-                <span>-Rp {{ formatPrice(cartStore.discount) }}</span>
+                <span>-₱{{ formatPrice(cartStore.discount) }}</span>
               </div>
               <div class="border-t pt-3 flex justify-between text-xl font-bold text-gray-900">
                 <span>Total</span>
-                <span>Rp {{ formatPrice(cartStore.total) }}</span>
+                <span>₱{{ formatPrice(cartStore.total) }}</span>
               </div>
             </div>
             <router-link to="/checkout" class="block w-full btn-primary text-center">
@@ -113,7 +113,7 @@ onMounted(() => {
 })
 
 const formatPrice = (price) => {
-  return new Intl.NumberFormat('id-ID').format(price)
+  return new Intl.NumberFormat('en-PH').format(price)
 }
 
 const updateQuantity = async (itemId, newQuantity) => {
