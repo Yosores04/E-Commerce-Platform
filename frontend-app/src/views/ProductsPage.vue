@@ -159,9 +159,15 @@ watch(() => route.query, async (newQuery) => {
 const loadCategories = async () => {
   try {
     const response = await productsService.getCategories()
-    categories.value = response.data
+    // Handle Laravel pagination structure
+    if (response.data && Array.isArray(response.data.data)) {
+      categories.value = response.data.data
+    } else if (Array.isArray(response.data)) {
+      categories.value = response.data
+    }
   } catch (error) {
     console.error('Failed to load categories:', error)
+    categories.value = []
   }
 }
 
