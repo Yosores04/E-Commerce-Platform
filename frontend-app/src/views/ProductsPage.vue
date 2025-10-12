@@ -9,39 +9,82 @@
             <p class="text-gray-600 mt-1">{{ pagination.total }} products found</p>
           </div>
           
-          <!-- View Toggle -->
-          <div class="flex items-center space-x-2 bg-white rounded-lg border border-gray-200 p-1">
+          <!-- Controls -->
+          <div class="flex items-center space-x-3">
+            <!-- Filter Toggle Button -->
             <button
-              @click="viewMode = 'grid'"
-              :class="[
-                'p-2 rounded transition-colors',
-                viewMode === 'grid' ? 'bg-wine text-white' : 'text-gray-600 hover:bg-gray-100'
-              ]"
-              title="Grid View"
+              @click="showFilters = !showFilters"
+              class="lg:hidden flex items-center space-x-2 px-4 py-2 bg-wine text-white rounded-lg hover:bg-wine/90 transition-colors"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
               </svg>
+              <span>Filters</span>
+              <span v-if="hasActiveFilters" class="bg-white text-wine text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                {{ activeFiltersCount }}
+              </span>
             </button>
-            <button
-              @click="viewMode = 'list'"
-              :class="[
-                'p-2 rounded transition-colors',
-                viewMode === 'list' ? 'bg-wine text-white' : 'text-gray-600 hover:bg-gray-100'
-              ]"
-              title="List View"
-            >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
+
+            <!-- View Toggle -->
+            <div class="flex items-center space-x-2 bg-white rounded-lg border border-gray-200 p-1">
+              <button
+                @click="viewMode = 'grid'"
+                :class="[
+                  'p-2 rounded transition-colors',
+                  viewMode === 'grid' ? 'bg-wine text-white' : 'text-gray-600 hover:bg-gray-100'
+                ]"
+                title="Grid View"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+              </button>
+              <button
+                @click="viewMode = 'list'"
+                :class="[
+                  'p-2 rounded transition-colors',
+                  viewMode === 'list' ? 'bg-wine text-white' : 'text-gray-600 hover:bg-gray-100'
+                ]"
+                title="List View"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <!-- Filters Sidebar -->
-          <aside class="lg:col-span-1">
+          <aside 
+            :class="[
+              'lg:col-span-1 transition-all duration-300',
+              showFilters ? 'block' : 'hidden lg:block'
+            ]"
+          >
             <div class="bg-white rounded-lg shadow-md p-6 sticky top-20">
+              <!-- Close button for mobile -->
+              <div class="flex items-center justify-between mb-6">
+                <h2 class="text-lg font-bold text-gray-900">Filters</h2>
+                <div class="flex items-center space-x-2">
+                  <button
+                    v-if="hasActiveFilters"
+                    @click="clearFilters"
+                    class="text-sm text-wine hover:underline"
+                  >
+                    Clear All
+                  </button>
+                  <button
+                    @click="showFilters = false"
+                    class="lg:hidden text-gray-400 hover:text-gray-600"
+                  >
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
               <div class="flex items-center justify-between mb-6">
                 <h2 class="text-lg font-bold text-gray-900">Filters</h2>
                 <button
@@ -182,7 +225,12 @@
           </aside>
 
           <!-- Products Grid/List -->
-          <main class="lg:col-span-3">
+          <main 
+            :class="[
+              'transition-all duration-300',
+              showFilters ? 'lg:col-span-3' : 'lg:col-span-4'
+            ]"
+          >
             <div v-if="isLoading" class="flex justify-center py-12">
               <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-wine"></div>
             </div>
@@ -301,6 +349,7 @@ const products = ref([])
 const categories = ref([])
 const isLoading = ref(false)
 const viewMode = ref('grid') // 'grid' or 'list'
+const showFilters = ref(true) // Show filters by default on desktop
 const maxPrice = ref(100000)
 
 const filters = ref({
@@ -328,6 +377,15 @@ const hasActiveFilters = computed(() => {
     filters.value.minPrice > 0 ||
     filters.value.maxPrice < maxPrice.value ||
     filters.value.inStockOnly
+})
+
+const activeFiltersCount = computed(() => {
+  let count = 0
+  if (filters.value.search) count++
+  if (filters.value.selectedCategories.length > 0) count++
+  if (filters.value.minPrice > 0 || filters.value.maxPrice < maxPrice.value) count++
+  if (filters.value.inStockOnly) count++
+  return count
 })
 
 const visiblePages = computed(() => {
