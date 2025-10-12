@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Product;
+use App\Models\ProductImage;
 use App\Models\Category;
 use App\Models\Vendor;
 use Illuminate\Database\Seeder;
@@ -411,8 +412,45 @@ class ProductsSeeder extends Seeder
             $autoProducts
         );
 
+        // Product image mapping (Unsplash collections)
+        $categoryImageMap = [
+            'Smartphones' => ['technology', 'smartphone', 'phone'],
+            'Laptops' => ['laptop', 'computer', 'technology'],
+            'Tablets' => ['tablet', 'ipad', 'technology'],
+            'Headphones' => ['headphones', 'audio', 'music'],
+            'Cameras' => ['camera', 'photography', 'photo'],
+            'Smart Watches' => ['smartwatch', 'watch', 'technology'],
+            'Men\'s Clothing' => ['mens-fashion', 'clothing', 'fashion'],
+            'Women\'s Clothing' => ['womens-fashion', 'dress', 'fashion'],
+            'Shoes' => ['shoes', 'sneakers', 'footwear'],
+            'Bags & Accessories' => ['bag', 'handbag', 'fashion'],
+            'Jewelry' => ['jewelry', 'necklace', 'accessories'],
+            'Furniture' => ['furniture', 'interior', 'home'],
+            'Kitchen & Dining' => ['kitchen', 'cookware', 'dining'],
+            'Bedding' => ['bedroom', 'bed', 'bedding'],
+            'Home Decor' => ['home-decor', 'interior', 'decoration'],
+            'Skincare' => ['skincare', 'beauty', 'cosmetics'],
+            'Makeup' => ['makeup', 'cosmetics', 'beauty'],
+            'Hair Care' => ['hair', 'beauty', 'salon'],
+            'Fragrances' => ['perfume', 'fragrance', 'scent'],
+            'Fitness Equipment' => ['fitness', 'yoga', 'exercise'],
+            'Exercise & Fitness' => ['gym', 'fitness', 'workout'],
+            'Camping & Hiking' => ['camping', 'outdoor', 'hiking'],
+            'Cycling' => ['bicycle', 'cycling', 'bike'],
+            'Team Sports' => ['basketball', 'sports', 'game'],
+            'Books' => ['book', 'reading', 'library'],
+            'Video Games' => ['gaming', 'headset', 'gamer'],
+            'Toys' => ['toys', 'lego', 'kids'],
+            'Baby Products' => ['baby', 'stroller', 'infant'],
+            'Kids Clothing' => ['kids', 'children', 'clothing'],
+            'Educational' => ['education', 'learning', 'science'],
+            'Tires & Wheels' => ['tire', 'wheel', 'automotive'],
+            'Car Accessories' => ['car', 'automotive', 'vehicle'],
+            'Tools & Equipment' => ['tools', 'equipment', 'workshop'],
+        ];
+
         // Create products
-        foreach ($allProducts as $productData) {
+        foreach ($allProducts as $index => $productData) {
             // Find the category
             $category = $categories->firstWhere('name', $productData['category']);
             
@@ -427,7 +465,7 @@ class ProductsSeeder extends Seeder
             $isFeatured = rand(1, 100) <= 20;
             $isActive = true;
 
-            Product::create([
+            $product = Product::create([
                 'vendor_id' => $vendor->id,
                 'category_id' => $category->id,
                 'name' => $productData['name'],
@@ -449,9 +487,29 @@ class ProductsSeeder extends Seeder
                 'meta_title' => $productData['name'],
                 'meta_description' => $productData['description'],
             ]);
+
+            // Add placeholder images using Unsplash
+            $categoryName = $productData['category'];
+            $keywords = $categoryImageMap[$categoryName] ?? ['product', 'shopping', 'ecommerce'];
+            
+            // Create 3-5 product images
+            $imageCount = rand(3, 5);
+            for ($i = 0; $i < $imageCount; $i++) {
+                $keyword = $keywords[array_rand($keywords)];
+                $randomSeed = $product->id . $i . time();
+                
+                ProductImage::create([
+                    'product_id' => $product->id,
+                    'image_path' => "https://source.unsplash.com/800x800/?{$keyword}&sig={$randomSeed}",
+                    'alt_text' => $productData['name'] . ' - Image ' . ($i + 1),
+                    'is_primary' => $i === 0, // First image is primary
+                    'order' => $i + 1,
+                ]);
+            }
         }
 
         $this->command->info('Products seeded successfully!');
         $this->command->info('Total products created: ' . count($allProducts));
+        $this->command->info('Product images created: ' . (count($allProducts) * 4) . ' (avg)');
     }
 }
