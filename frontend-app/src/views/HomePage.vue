@@ -120,9 +120,15 @@ const loadProducts = async () => {
   isLoading.value = true
   try {
     const response = await productsService.getProducts({ limit: 8 })
-    products.value = response.data
+    // Handle Laravel pagination structure
+    if (response.data && Array.isArray(response.data.data)) {
+      products.value = response.data.data
+    } else if (Array.isArray(response.data)) {
+      products.value = response.data
+    }
   } catch (error) {
     console.error('Failed to load products:', error)
+    products.value = []
   } finally {
     isLoading.value = false
   }

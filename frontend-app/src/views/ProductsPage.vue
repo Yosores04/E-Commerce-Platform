@@ -38,10 +38,10 @@
             <label class="form-label">Price Range</label>
             <select v-model="filters.priceRange" @change="loadProducts" class="form-input">
               <option value="">All Prices</option>
-              <option value="0-100000">Under Rp 100,000</option>
-              <option value="100000-500000">Rp 100,000 - 500,000</option>
-              <option value="500000-1000000">Rp 500,000 - 1,000,000</option>
-              <option value="1000000-">Over Rp 1,000,000</option>
+              <option value="0-5000">Under ₱5,000</option>
+              <option value="5000-25000">₱5,000 - ₱25,000</option>
+              <option value="25000-50000">₱25,000 - ₱50,000</option>
+              <option value="50000-">Over ₱50,000</option>
             </select>
           </div>
         </div>
@@ -187,18 +187,23 @@ const loadProducts = async (page = 1) => {
     }
     
     const response = await productsService.getProducts(params)
-    products.value = response.data
     
-    if (response.meta) {
+    // Handle Laravel pagination structure: response.data contains pagination object
+    if (response.data && Array.isArray(response.data.data)) {
+      products.value = response.data.data
       pagination.value = {
-        current_page: response.meta.current_page,
-        last_page: response.meta.last_page,
-        per_page: response.meta.per_page,
-        total: response.meta.total
+        current_page: response.data.current_page,
+        last_page: response.data.last_page,
+        per_page: response.data.per_page,
+        total: response.data.total
       }
+    } else if (Array.isArray(response.data)) {
+      // Fallback for direct array response
+      products.value = response.data
     }
   } catch (error) {
     console.error('Failed to load products:', error)
+    products.value = []
   } finally {
     isLoading.value = false
   }
