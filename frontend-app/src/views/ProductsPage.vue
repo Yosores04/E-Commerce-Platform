@@ -85,16 +85,6 @@
                   </button>
                 </div>
               </div>
-              <div class="flex items-center justify-between mb-6">
-                <h2 class="text-lg font-bold text-gray-900">Filters</h2>
-                <button
-                  v-if="hasActiveFilters"
-                  @click="clearFilters"
-                  class="text-sm text-wine hover:underline"
-                >
-                  Clear All
-                </button>
-              </div>
 
               <!-- Search -->
               <div class="mb-6">
