@@ -6,9 +6,10 @@
     <!-- Product Image with overlay -->
     <div class="relative overflow-hidden aspect-square bg-neutral-50">
       <img 
-        :src="product.image_url || '/placeholder-product.jpg'" 
+        :src="primaryImage" 
         :alt="product.name"
         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+        @error="handleImageError"
       />
       
       <!-- Elegant gradient overlay on hover -->
@@ -113,7 +114,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { 
   ShoppingCartIcon, 
@@ -133,6 +134,26 @@ const props = defineProps({
 const router = useRouter()
 const cartStore = useCartStore()
 const isWishlisted = ref(false)
+const imageError = ref(false)
+
+// Get primary image or fallback to first image or placeholder
+const primaryImage = computed(() => {
+  if (imageError.value) {
+    return 'https://via.placeholder.com/800x800/5B2333/F7F4F3?text=No+Image'
+  }
+  
+  if (props.product.images && props.product.images.length > 0) {
+    // Find primary image or use first image
+    const primary = props.product.images.find(img => img.is_primary)
+    return primary ? primary.image_path : props.product.images[0].image_path
+  }
+  
+  return 'https://via.placeholder.com/800x800/5B2333/F7F4F3?text=No+Image'
+})
+
+const handleImageError = () => {
+  imageError.value = true
+}
 
 const formatPrice = (price) => {
   return new Intl.NumberFormat('en-PH').format(price)
@@ -169,6 +190,7 @@ const showToast = (message, type = 'success') => {
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }

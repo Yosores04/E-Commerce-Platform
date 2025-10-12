@@ -488,19 +488,19 @@ class ProductsSeeder extends Seeder
                 'meta_description' => $productData['description'],
             ]);
 
-            // Add placeholder images using Unsplash
+            // Add placeholder images using Lorem Picsum (more reliable than Unsplash)
             $categoryName = $productData['category'];
             $keywords = $categoryImageMap[$categoryName] ?? ['product', 'shopping', 'ecommerce'];
             
-            // Create 3-5 product images
+            // Create 3-5 product images with Lorem Picsum
             $imageCount = rand(3, 5);
             for ($i = 0; $i < $imageCount; $i++) {
-                $keyword = $keywords[array_rand($keywords)];
-                $randomSeed = $product->id . $i . time();
+                // Use Lorem Picsum with unique IDs for each image
+                $imageId = ($product->id * 100) + $i;
                 
                 ProductImage::create([
                     'product_id' => $product->id,
-                    'image_path' => "https://source.unsplash.com/800x800/?{$keyword}&sig={$randomSeed}",
+                    'image_path' => "https://picsum.photos/800/800?random={$imageId}",
                     'alt_text' => $productData['name'] . ' - Image ' . ($i + 1),
                     'is_primary' => $i === 0, // First image is primary
                     'order' => $i + 1,
