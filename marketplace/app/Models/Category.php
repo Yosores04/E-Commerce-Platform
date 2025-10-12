@@ -3,8 +3,52 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Category extends Model
 {
-    //
+    use SoftDeletes;
+
+    protected $fillable = [
+        'parent_id',
+        'name',
+        'slug',
+        'description',
+        'image',
+        'icon',
+        'order',
+        'status',
+        'meta_title',
+        'meta_description',
+    ];
+
+    protected $casts = [
+        'order' => 'integer',
+    ];
+
+    /**
+     * Get the parent category
+     */
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(Category::class, 'parent_id');
+    }
+
+    /**
+     * Get child categories
+     */
+    public function children(): HasMany
+    {
+        return $this->hasMany(Category::class, 'parent_id')->where('status', 'active');
+    }
+
+    /**
+     * Get all products in this category
+     */
+    public function products(): HasMany
+    {
+        return $this->hasMany(Product::class);
+    }
 }

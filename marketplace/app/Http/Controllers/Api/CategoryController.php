@@ -31,7 +31,7 @@ class CategoryController extends Controller
 
         // Filter by active status
         if ($request->has('is_active')) {
-            $query->where('is_active', $request->boolean('is_active'));
+            $query->where('status', $request->boolean('is_active') ? 'active' : 'inactive');
         }
 
         // Search by name
@@ -43,13 +43,13 @@ class CategoryController extends Controller
         if ($request->has('tree') && $request->boolean('tree')) {
             $categories = Category::whereNull('parent_id')
                 ->with('children')
-                ->where('is_active', true)
-                ->orderBy('sort_order')
+                ->where('status', 'active')
+                ->orderBy('order')
                 ->get();
         } else {
             // Regular paginated list
             $perPage = $request->get('per_page', 20);
-            $categories = $query->orderBy('sort_order')->paginate($perPage);
+            $categories = $query->orderBy('order')->paginate($perPage);
         }
 
         return response()->json([
@@ -73,8 +73,8 @@ class CategoryController extends Controller
             'description' => 'nullable|string',
             'image' => 'nullable|string|max:255',
             'icon' => 'nullable|string|max:255',
-            'sort_order' => 'nullable|integer|min:0',
-            'is_active' => 'boolean',
+            'order' => 'nullable|integer|min:0',
+            'status' => 'nullable|in:active,inactive',
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
             'meta_keywords' => 'nullable|string',
@@ -134,8 +134,8 @@ class CategoryController extends Controller
             'description' => 'nullable|string',
             'image' => 'nullable|string|max:255',
             'icon' => 'nullable|string|max:255',
-            'sort_order' => 'nullable|integer|min:0',
-            'is_active' => 'boolean',
+            'order' => 'nullable|integer|min:0',
+            'status' => 'nullable|in:active,inactive',
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
             'meta_keywords' => 'nullable|string',
