@@ -1,105 +1,286 @@
 <template>
   <DefaultLayout>
-    <div class="container mx-auto px-4 py-8">
-      <h1 class="text-3xl font-bold text-gray-900 mb-6">All Products</h1>
-
-      <!-- Filters -->
-      <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div class="bg-whitesmoke min-h-screen">
+      <div class="container mx-auto px-4 py-8">
+        <!-- Page Header -->
+        <div class="flex items-center justify-between mb-6">
           <div>
-            <label class="form-label">Search</label>
-            <input
-              v-model="filters.search"
-              type="text"
-              placeholder="Search products..."
-              class="form-input"
-              @input="debouncedSearch"
-            />
+            <h1 class="text-3xl font-bold text-gray-900">All Products</h1>
+            <p class="text-gray-600 mt-1">{{ pagination.total }} products found</p>
           </div>
-          <div>
-            <label class="form-label">Category</label>
-            <select v-model="filters.category" @change="loadProducts" class="form-input">
-              <option value="">All Categories</option>
-              <option v-for="category in categories" :key="category.id" :value="category.id">
-                {{ category.name }}
-              </option>
-            </select>
-          </div>
-          <div>
-            <label class="form-label">Sort By</label>
-            <select v-model="filters.sort" @change="loadProducts" class="form-input">
-              <option value="newest">Newest</option>
-              <option value="price_low">Price: Low to High</option>
-              <option value="price_high">Price: High to Low</option>
-              <option value="popular">Most Popular</option>
-            </select>
-          </div>
-          <div>
-            <label class="form-label">Price Range</label>
-            <select v-model="filters.priceRange" @change="loadProducts" class="form-input">
-              <option value="">All Prices</option>
-              <option value="0-5000">Under ₱5,000</option>
-              <option value="5000-25000">₱5,000 - ₱25,000</option>
-              <option value="25000-50000">₱25,000 - ₱50,000</option>
-              <option value="50000-">Over ₱50,000</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <!-- Products Grid -->
-      <div v-if="isLoading" class="flex justify-center py-12">
-        <div class="spinner"></div>
-      </div>
-
-      <div v-else-if="products.length > 0">
-        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
-          <ProductCard 
-            v-for="product in products"
-            :key="product.id"
-            :product="product"
-          />
-        </div>
-
-        <!-- Pagination -->
-        <div v-if="pagination.total > pagination.per_page" class="flex justify-center">
-          <nav class="flex space-x-2">
+          
+          <!-- View Toggle -->
+          <div class="flex items-center space-x-2 bg-white rounded-lg border border-gray-200 p-1">
             <button
-              @click="changePage(pagination.current_page - 1)"
-              :disabled="pagination.current_page === 1"
-              class="px-4 py-2 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
-            >
-              Previous
-            </button>
-            <button
-              v-for="page in visiblePages"
-              :key="page"
-              @click="changePage(page)"
+              @click="viewMode = 'grid'"
               :class="[
-                'px-4 py-2 border rounded-md',
-                page === pagination.current_page
-                  ? 'bg-primary-600 text-white border-primary-600'
-                  : 'border-gray-300 hover:bg-gray-50'
+                'p-2 rounded transition-colors',
+                viewMode === 'grid' ? 'bg-wine text-white' : 'text-gray-600 hover:bg-gray-100'
               ]"
+              title="Grid View"
             >
-              {{ page }}
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+              </svg>
             </button>
             <button
-              @click="changePage(pagination.current_page + 1)"
-              :disabled="pagination.current_page === pagination.last_page"
-              class="px-4 py-2 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+              @click="viewMode = 'list'"
+              :class="[
+                'p-2 rounded transition-colors',
+                viewMode === 'list' ? 'bg-wine text-white' : 'text-gray-600 hover:bg-gray-100'
+              ]"
+              title="List View"
             >
-              Next
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
             </button>
-          </nav>
+          </div>
         </div>
-      </div>
 
-      <div v-else class="text-center py-12 text-gray-500">
-        <p class="text-xl">No products found.</p>
-        <button @click="clearFilters" class="mt-4 btn-primary">
-          Clear Filters
-        </button>
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          <!-- Filters Sidebar -->
+          <aside class="lg:col-span-1">
+            <div class="bg-white rounded-lg shadow-md p-6 sticky top-20">
+              <div class="flex items-center justify-between mb-6">
+                <h2 class="text-lg font-bold text-gray-900">Filters</h2>
+                <button
+                  v-if="hasActiveFilters"
+                  @click="clearFilters"
+                  class="text-sm text-wine hover:underline"
+                >
+                  Clear All
+                </button>
+              </div>
+
+              <!-- Search -->
+              <div class="mb-6">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Search</label>
+                <div class="relative">
+                  <input
+                    v-model="filters.search"
+                    type="text"
+                    placeholder="Search products..."
+                    class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-wine focus:border-transparent"
+                    @input="debouncedSearch"
+                  />
+                  <svg class="absolute left-3 top-2.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Categories -->
+              <div class="mb-6">
+                <label class="block text-sm font-semibold text-gray-700 mb-3">Categories</label>
+                <div class="space-y-2 max-h-64 overflow-y-auto">
+                  <label
+                    v-for="category in categories"
+                    :key="category.id"
+                    class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded"
+                  >
+                    <input
+                      type="checkbox"
+                      :value="category.id"
+                      v-model="filters.selectedCategories"
+                      @change="loadProducts"
+                      class="w-4 h-4 text-wine border-gray-300 rounded focus:ring-wine"
+                    />
+                    <span class="text-sm text-gray-700">{{ category.name }}</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Price Range Slider -->
+              <div class="mb-6">
+                <label class="block text-sm font-semibold text-gray-700 mb-3">
+                  Price Range
+                </label>
+                <div class="space-y-4">
+                  <div>
+                    <input
+                      v-model.number="filters.minPrice"
+                      type="range"
+                      min="0"
+                      :max="maxPrice"
+                      step="1000"
+                      @input="debouncedPriceFilter"
+                      class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-wine"
+                    />
+                    <div class="flex justify-between text-xs text-gray-600 mt-1">
+                      <span>₱{{ formatPrice(filters.minPrice) }}</span>
+                      <span>₱{{ formatPrice(filters.maxPrice) }}</span>
+                    </div>
+                  </div>
+                  <div>
+                    <input
+                      v-model.number="filters.maxPrice"
+                      type="range"
+                      :min="filters.minPrice"
+                      :max="maxPrice"
+                      step="1000"
+                      @input="debouncedPriceFilter"
+                      class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-wine"
+                    />
+                  </div>
+                  <div class="flex items-center justify-between pt-2 border-t">
+                    <div class="text-center">
+                      <div class="text-xs text-gray-600 mb-1">Min</div>
+                      <input
+                        v-model.number="filters.minPrice"
+                        type="number"
+                        class="w-24 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-wine focus:border-transparent"
+                        @change="loadProducts"
+                      />
+                    </div>
+                    <span class="text-gray-400">-</span>
+                    <div class="text-center">
+                      <div class="text-xs text-gray-600 mb-1">Max</div>
+                      <input
+                        v-model.number="filters.maxPrice"
+                        type="number"
+                        class="w-24 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-wine focus:border-transparent"
+                        @change="loadProducts"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Stock Status -->
+              <div class="mb-6">
+                <label class="block text-sm font-semibold text-gray-700 mb-3">Availability</label>
+                <div class="space-y-2">
+                  <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded">
+                    <input
+                      type="checkbox"
+                      v-model="filters.inStockOnly"
+                      @change="loadProducts"
+                      class="w-4 h-4 text-wine border-gray-300 rounded focus:ring-wine"
+                    />
+                    <span class="text-sm text-gray-700">In Stock Only</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Sort -->
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Sort By</label>
+                <select
+                  v-model="filters.sort"
+                  @change="loadProducts"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-wine focus:border-transparent"
+                >
+                  <option value="newest">Newest First</option>
+                  <option value="price_low">Price: Low to High</option>
+                  <option value="price_high">Price: High to Low</option>
+                  <option value="popular">Most Popular</option>
+                  <option value="name">Name: A-Z</option>
+                </select>
+              </div>
+            </div>
+          </aside>
+
+          <!-- Products Grid/List -->
+          <main class="lg:col-span-3">
+            <div v-if="isLoading" class="flex justify-center py-12">
+              <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-wine"></div>
+            </div>
+
+            <div v-else-if="products.length > 0">
+              <!-- Grid View -->
+              <div
+                v-if="viewMode === 'grid'"
+                class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8"
+              >
+                <ProductCard
+                  v-for="product in products"
+                  :key="product.id"
+                  :product="product"
+                />
+              </div>
+
+              <!-- List View -->
+              <div v-else class="space-y-4 mb-8">
+                <ProductCardList
+                  v-for="product in products"
+                  :key="product.id"
+                  :product="product"
+                />
+              </div>
+
+              <!-- Pagination -->
+              <div v-if="pagination.last_page > 1" class="flex flex-col items-center space-y-4">
+                <nav class="flex items-center space-x-2">
+                  <button
+                    @click="changePage(1)"
+                    :disabled="pagination.current_page === 1"
+                    class="px-3 py-2 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                    title="First Page"
+                  >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+                    </svg>
+                  </button>
+                  <button
+                    @click="changePage(pagination.current_page - 1)"
+                    :disabled="pagination.current_page === 1"
+                    class="px-4 py-2 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                  >
+                    Previous
+                  </button>
+                  
+                  <button
+                    v-for="page in visiblePages"
+                    :key="page"
+                    @click="changePage(page)"
+                    :class="[
+                      'px-4 py-2 border rounded-md transition-colors',
+                      page === pagination.current_page
+                        ? 'bg-wine text-white border-wine'
+                        : 'border-gray-300 hover:bg-gray-50'
+                    ]"
+                  >
+                    {{ page }}
+                  </button>
+                  
+                  <button
+                    @click="changePage(pagination.current_page + 1)"
+                    :disabled="pagination.current_page === pagination.last_page"
+                    class="px-4 py-2 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                  >
+                    Next
+                  </button>
+                  <button
+                    @click="changePage(pagination.last_page)"
+                    :disabled="pagination.current_page === pagination.last_page"
+                    class="px-3 py-2 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                    title="Last Page"
+                  >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </nav>
+                <div class="text-sm text-gray-600">
+                  Page {{ pagination.current_page }} of {{ pagination.last_page }} 
+                  ({{ pagination.total }} total products)
+                </div>
+              </div>
+            </div>
+
+            <div v-else class="text-center py-12 bg-white rounded-lg shadow-md">
+              <svg class="w-24 h-24 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+              </svg>
+              <p class="text-xl text-gray-500 font-medium mb-4">No products found</p>
+              <p class="text-gray-400 mb-6">Try adjusting your filters or search terms</p>
+              <button @click="clearFilters" class="px-6 py-2 bg-wine text-white rounded-lg hover:bg-wine/90 transition-colors">
+                Clear All Filters
+              </button>
+            </div>
+          </main>
+        </div>
       </div>
     </div>
   </DefaultLayout>
@@ -110,6 +291,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import DefaultLayout from '../layouts/DefaultLayout.vue'
 import ProductCard from '../components/ProductCard.vue'
+import ProductCardList from '../components/ProductCardList.vue'
 import { productsService } from '../services/products'
 
 const route = useRoute()
@@ -118,12 +300,18 @@ const router = useRouter()
 const products = ref([])
 const categories = ref([])
 const isLoading = ref(false)
+const viewMode = ref('grid') // 'grid' or 'list'
+const maxPrice = ref(100000)
+
 const filters = ref({
   search: route.query.q || '',
-  category: route.query.category || '',
+  selectedCategories: [],
   sort: route.query.sort || 'newest',
-  priceRange: route.query.price || ''
+  minPrice: 0,
+  maxPrice: 100000,
+  inStockOnly: false
 })
+
 const pagination = ref({
   current_page: 1,
   last_page: 1,
@@ -132,13 +320,35 @@ const pagination = ref({
 })
 
 let searchTimeout = null
+let priceTimeout = null
+
+const hasActiveFilters = computed(() => {
+  return filters.value.search !== '' ||
+    filters.value.selectedCategories.length > 0 ||
+    filters.value.minPrice > 0 ||
+    filters.value.maxPrice < maxPrice.value ||
+    filters.value.inStockOnly
+})
 
 const visiblePages = computed(() => {
   const pages = []
   const current = pagination.value.current_page
   const last = pagination.value.last_page
   
-  for (let i = Math.max(1, current - 2); i <= Math.min(last, current + 2); i++) {
+  // Show max 5 pages
+  let start = Math.max(1, current - 2)
+  let end = Math.min(last, current + 2)
+  
+  // Adjust if we're near the beginning or end
+  if (end - start < 4) {
+    if (start === 1) {
+      end = Math.min(last, start + 4)
+    } else if (end === last) {
+      start = Math.max(1, end - 4)
+    }
+  }
+  
+  for (let i = start; i <= end; i++) {
     pages.push(i)
   }
   
@@ -152,14 +362,12 @@ onMounted(async () => {
 
 watch(() => route.query, async (newQuery) => {
   filters.value.search = newQuery.q || ''
-  filters.value.category = newQuery.category || ''
   await loadProducts()
 })
 
 const loadCategories = async () => {
   try {
     const response = await productsService.getCategories()
-    // Handle Laravel pagination structure
     if (response.data && Array.isArray(response.data.data)) {
       categories.value = response.data.data
     } else if (Array.isArray(response.data)) {
@@ -183,18 +391,25 @@ const loadProducts = async (page = 1) => {
     if (filters.value.search) {
       params.q = filters.value.search
     }
-    if (filters.value.category) {
-      params.category_id = filters.value.category
+    
+    if (filters.value.selectedCategories.length > 0) {
+      params.category_id = filters.value.selectedCategories.join(',')
     }
-    if (filters.value.priceRange) {
-      const [min, max] = filters.value.priceRange.split('-')
-      if (min) params.min_price = min
-      if (max) params.max_price = max
+    
+    if (filters.value.minPrice > 0) {
+      params.min_price = filters.value.minPrice
+    }
+    
+    if (filters.value.maxPrice < maxPrice.value) {
+      params.max_price = filters.value.maxPrice
+    }
+    
+    if (filters.value.inStockOnly) {
+      params.in_stock = 1
     }
     
     const response = await productsService.getProducts(params)
     
-    // Handle Laravel pagination structure: response.data contains pagination object
     if (response.data && Array.isArray(response.data.data)) {
       products.value = response.data.data
       pagination.value = {
@@ -204,7 +419,6 @@ const loadProducts = async (page = 1) => {
         total: response.data.total
       }
     } else if (Array.isArray(response.data)) {
-      // Fallback for direct array response
       products.value = response.data
     }
   } catch (error) {
@@ -222,6 +436,13 @@ const debouncedSearch = () => {
   }, 500)
 }
 
+const debouncedPriceFilter = () => {
+  if (priceTimeout) clearTimeout(priceTimeout)
+  priceTimeout = setTimeout(() => {
+    loadProducts()
+  }, 300)
+}
+
 const changePage = (page) => {
   if (page >= 1 && page <= pagination.value.last_page) {
     loadProducts(page)
@@ -232,11 +453,60 @@ const changePage = (page) => {
 const clearFilters = () => {
   filters.value = {
     search: '',
-    category: '',
+    selectedCategories: [],
     sort: 'newest',
-    priceRange: ''
+    minPrice: 0,
+    maxPrice: maxPrice.value,
+    inStockOnly: false
   }
   router.push({ name: 'Products' })
   loadProducts()
 }
+
+const formatPrice = (price) => {
+  return new Intl.NumberFormat('en-PH').format(price)
+}
 </script>
+
+<style scoped>
+/* Custom range slider styling */
+.slider-wine::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  background: #5B2333;
+  cursor: pointer;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.slider-wine::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  background: #5B2333;
+  cursor: pointer;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.slider-wine::-webkit-slider-runnable-track {
+  background: linear-gradient(to right, #5B2333 0%, #5B2333 var(--value), #e5e7eb var(--value), #e5e7eb 100%);
+  height: 8px;
+  border-radius: 4px;
+}
+
+.slider-wine::-moz-range-track {
+  background: #e5e7eb;
+  height: 8px;
+  border-radius: 4px;
+}
+
+.slider-wine::-moz-range-progress {
+  background: #5B2333;
+  height: 8px;
+  border-radius: 4px;
+}
+</style>
