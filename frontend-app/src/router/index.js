@@ -111,16 +111,6 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
   
-  // If user has a token but no user data, try to fetch it
-  if (authStore.token && !authStore.user && !to.meta.requiresGuest) {
-    try {
-      await authStore.fetchProfile()
-    } catch (error) {
-      // If profile fetch fails, clear invalid token
-      authStore.logout()
-    }
-  }
-  
   // Check if route requires authentication
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next({ name: 'Login', query: { redirect: to.fullPath } })

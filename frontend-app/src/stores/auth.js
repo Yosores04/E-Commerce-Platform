@@ -91,9 +91,11 @@ export const useAuthStore = defineStore('auth', {
         return response
       } catch (error) {
         console.error('Failed to fetch profile:', error)
-        // If token is invalid, logout
+        // If token is invalid, clear local state without calling logout API
         if (error.response?.status === 401) {
-          this.logout()
+          this.token = null
+          this.user = null
+          localStorage.removeItem('token')
         }
         throw error
       } finally {

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clear Auth Token - Xerxia</title>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #5B2333 0%, #3d1722 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            text-align: center;
+        }
+        h1 {
+            color: #5B2333;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        p {
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        button {
+            background: linear-gradient(135deg, #5B2333 0%, #a02b48 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(91, 35, 51, 0.3);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        .success {
+            background: #10b981;
+            padding: 15px;
+            border-radius: 10px;
+            color: white;
+            margin-top: 20px;
+            display: none;
+        }
+        .info {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            color: #5B2333;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">Χ</div>
+        <h1>Clear Authentication Token</h1>
+        <p>If you're experiencing login redirect loops or authentication issues, click the button below to clear all stored authentication data.</p>
+        
+        <button onclick="clearAuth()">Clear Auth Data</button>
+        
+        <div class="success" id="successMessage">
+            ✅ Authentication data cleared successfully!<br>
+            <small>You can now close this page and refresh your Xerxia marketplace.</small>
+        </div>
+        
+        <div class="info">
+            <strong>What this does:</strong><br>
+            Removes the stored authentication token from your browser's localStorage. This will log you out and fix any redirect loops.
+        </div>
+    </div>
+
+    <script>
+        function clearAuth() {
+            try {
+                // Clear the token from localStorage
+                localStorage.removeItem('token');
+                
+                // Show success message
+                document.getElementById('successMessage').style.display = 'block';
+                
+                // Optional: Redirect to the app after 2 seconds
+                setTimeout(() => {
+                    window.location.href = 'http://localhost:5173';
+                }, 2000);
+            } catch (error) {
+                alert('Error clearing auth data: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>
