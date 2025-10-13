@@ -330,7 +330,8 @@ import { useRoute, useRouter } from 'vue-router'
 import DefaultLayout from '../layouts/DefaultLayout.vue'
 import ProductCard from '../components/ProductCard.vue'
 import ProductCardList from '../components/ProductCardList.vue'
-import { productsService } from '../services/products'
+import { productService } from '../services/product'
+import { categoryService } from '../services/category'
 
 const route = useRoute()
 const router = useRouter()
@@ -415,11 +416,12 @@ watch(() => route.query, async (newQuery) => {
 
 const loadCategories = async () => {
   try {
-    const response = await productsService.getCategories()
-    if (response.data && Array.isArray(response.data.data)) {
-      categories.value = response.data.data
-    } else if (Array.isArray(response.data)) {
-      categories.value = response.data
+    const response = await categoryService.getCategories()
+    // Backend returns: { success: true, data: {...} }
+    if (response.success && response.data) {
+      categories.value = Array.isArray(response.data) ? response.data : response.data.data || []
+    } else {
+      categories.value = []
     }
   } catch (error) {
     console.error('Failed to load categories:', error)
@@ -432,16 +434,20 @@ const loadProducts = async (page = 1) => {
   try {
     const params = {
       page,
-      limit: pagination.value.per_page,
-      sort: filters.value.sort
+      per_page: pagination.value.per_page,
+      sort_by: filters.value.sort === 'newest' ? 'created_at' : 
+               filters.value.sort === 'price_low' ? 'price' : 
+               filters.value.sort === 'price_high' ? 'price' : 'created_at',
+      sort_order: filters.value.sort === 'price_high' ? 'desc' : 
+                  filters.value.sort === 'price_low' ? 'asc' : 'desc'
     }
     
     if (filters.value.search) {
-      params.q = filters.value.search
+      params.search = filters.value.search
     }
     
     if (filters.value.selectedCategories.length > 0) {
-      params.category_id = filters.value.selectedCategories.join(',')
+      params.category_id = filters.value.selectedCategories[0] // API takes single category
     }
     
     if (filters.value.minPrice > 0) {
@@ -456,18 +462,19 @@ const loadProducts = async (page = 1) => {
       params.in_stock = 1
     }
     
-    const response = await productsService.getProducts(params)
+    const response = await productService.getProducts(params)
     
-    if (response.data && Array.isArray(response.data.data)) {
-      products.value = response.data.data
+    // Backend returns: { success: true, data: { current_page, data: [], last_page, per_page, total } }
+    if (response.success && response.data) {
+      products.value = response.data.data || []
       pagination.value = {
-        current_page: response.data.current_page,
-        last_page: response.data.last_page,
-        per_page: response.data.per_page,
-        total: response.data.total
+        current_page: response.data.current_page || 1,
+        last_page: response.data.last_page || 1,
+        per_page: response.data.per_page || 15,
+        total: response.data.total || 0
       }
-    } else if (Array.isArray(response.data)) {
-      products.value = response.data
+    } else {
+      products.value = []
     }
   } catch (error) {
     console.error('Failed to load products:', error)

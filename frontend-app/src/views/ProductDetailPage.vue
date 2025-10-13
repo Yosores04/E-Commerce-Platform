@@ -283,7 +283,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import DefaultLayout from '../layouts/DefaultLayout.vue'
 import ProductCard from '../components/ProductCard.vue'
-import { productsService } from '../services/products'
+import { productService } from '../services/product'
 import { useCartStore } from '../stores/cart'
 
 const route = useRoute()
@@ -324,8 +324,9 @@ onMounted(async () => {
 const loadProduct = async () => {
   isLoading.value = true
   try {
-    const response = await productsService.getProduct(route.params.id)
-    product.value = response.data
+    const response = await productService.getProduct(route.params.id)
+    // Backend returns: { success: true, data: { product object } }
+    product.value = response.success ? response.data : null
     
     // Set initial selected image to primary or first image
     if (productImages.value.length > 0) {
@@ -342,15 +343,11 @@ const loadRelatedProducts = async () => {
   try {
     if (!product.value?.category_id) return
     
-    const response = await productsService.getProducts({
-      category: product.value.category_id,
-      per_page: 4
-    })
-    
-    // Filter out current product and limit to 4
-    relatedProducts.value = response.data.data
-      .filter(p => p.id !== product.value.id)
-      .slice(0, 4)
+    const response = await productService.getRelatedProducts(route.params.id, 4)
+    // Backend returns: { success: true, data: [...products] }
+    if (response.success) {
+      relatedProducts.value = Array.isArray(response.data) ? response.data : response.data.data || []
+    }
   } catch (error) {
     console.error('Failed to load related products:', error)
   }
