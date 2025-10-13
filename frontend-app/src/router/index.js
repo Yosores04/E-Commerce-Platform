@@ -107,6 +107,18 @@ const routes = [
     meta: { requiresAuth: true, requiresAdmin: true }
   },
   {
+    path: '/admin/reports',
+    name: 'AdminReports',
+    component: () => import('../views/admin/ReportsPage.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
+    path: '/admin/settings',
+    name: 'AdminSettings',
+    component: () => import('../views/admin/SettingsPage.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
     component: () => import('../views/NotFoundPage.vue')
