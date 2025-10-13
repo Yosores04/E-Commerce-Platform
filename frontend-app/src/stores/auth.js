@@ -36,6 +36,7 @@ export const useAuthStore = defineStore('auth', {
       
       try {
         const response = await authService.register(userData)
+        // Backend returns: { success: true, data: { user, token, token_type } }
         this.token = response.data.token
         this.user = response.data.user
         
@@ -56,6 +57,7 @@ export const useAuthStore = defineStore('auth', {
       
       try {
         const response = await authService.login(credentials)
+        // Backend returns: { success: true, data: { user, token, token_type } }
         this.token = response.data.token
         this.user = response.data.user
         
