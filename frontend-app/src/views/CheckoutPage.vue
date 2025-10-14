@@ -463,6 +463,7 @@ import { useRouter } from 'vue-router'
 import DefaultLayout from '../layouts/DefaultLayout.vue'
 import { useCartStore } from '../stores/cart'
 import { useAuthStore } from '../stores/auth'
+import { orderService } from '../services/order'
 
 const router = useRouter()
 const cartStore = useCartStore()
@@ -679,23 +680,50 @@ const placeOrder = async () => {
   isPlacingOrder.value = true
 
   try {
-    // TODO: Implement actual order placement API call
-    // const orderData = {
-    //   shipping_address_id: selectedShippingAddress.value.id,
-    //   billing_address_id: selectedShippingAddress.value.id,
-    //   shipping_method: selectedShippingMethod.value.id,
-    //   payment_method: selectedPaymentMethod.value.value,
-    //   notes: ''
-    // }
+    // Prepare order data
+    const orderData = {
+      shipping_address: {
+        full_name: shippingInfo.value.fullName,
+        phone: shippingInfo.value.phone,
+        address_line1: shippingInfo.value.address,
+        address_line2: shippingInfo.value.apartment,
+        city: shippingInfo.value.city,
+        state: shippingInfo.value.province,
+        postal_code: shippingInfo.value.postalCode,
+        country: 'Philippines'
+      },
+      billing_address: {
+        full_name: shippingInfo.value.fullName,
+        phone: shippingInfo.value.phone,
+        address_line1: shippingInfo.value.address,
+        address_line2: shippingInfo.value.apartment,
+        city: shippingInfo.value.city,
+        state: shippingInfo.value.province,
+        postal_code: shippingInfo.value.postalCode,
+        country: 'Philippines'
+      },
+      shipping_method: selectedShippingMethod.value.id,
+      payment_method: selectedPaymentMethod.value.value,
+      notes: ''
+    }
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000))
+    // Create order
+    const response = await orderService.createOrder(orderData)
     
-    // Redirect to order confirmation
-    router.push('/orders/confirmation')
+    if (response.success) {
+      // Clear cart after successful order
+      await cartStore.clearCart()
+      
+      // Redirect to order confirmation with order data
+      router.push({
+        name: 'OrderConfirmation',
+        params: { id: response.data.id },
+        query: { order_number: response.data.order_number }
+      })
+    }
   } catch (error) {
     console.error('Failed to place order:', error)
-    alert('Failed to place order. Please try again.')
+    alert(error.response?.data?.message || 'Failed to place order. Please try again.')
   } finally {
     isPlacingOrder.value = false
   }

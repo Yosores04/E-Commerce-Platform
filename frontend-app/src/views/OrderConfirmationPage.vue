@@ -2,8 +2,33 @@
   <DefaultLayout>
     <div class="bg-whitesmoke min-h-screen">
       <div class="container mx-auto px-4 py-12">
+        <!-- Loading State -->
+        <div v-if="loading" class="max-w-3xl mx-auto text-center py-12">
+          <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-wine mx-auto mb-4"></div>
+          <p class="text-gray-600">Loading order details...</p>
+        </div>
+
+        <!-- Error State -->
+        <div v-else-if="error" class="max-w-3xl mx-auto">
+          <div class="bg-white rounded-lg shadow-lg p-8 text-center">
+            <div class="mb-6">
+              <svg class="w-16 h-16 text-red-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900 mb-3">{{ error }}</h1>
+            <p class="text-gray-600 mb-6">Please try again or contact support if the problem persists.</p>
+            <router-link
+              to="/orders"
+              class="inline-block px-6 py-3 bg-wine text-white rounded-lg font-semibold hover:bg-wine/90 transition-all"
+            >
+              View All Orders
+            </router-link>
+          </div>
+        </div>
+
         <!-- Success Animation & Message -->
-        <div class="max-w-3xl mx-auto">
+        <div v-else class="max-w-3xl mx-auto">
           <div class="bg-white rounded-lg shadow-lg p-8 text-center mb-8">
             <!-- Success Icon with Animation -->
             <div class="mb-6 flex justify-center">
@@ -201,54 +226,102 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import DefaultLayout from '../layouts/DefaultLayout.vue'
+import { orderService } from '../services/order'
 
 const route = useRoute()
 const router = useRouter()
 
-// Mock order data (in real app, this would come from API or route params)
-const orderNumber = ref('ORD-' + Math.random().toString(36).substr(2, 9).toUpperCase())
-const orderDate = ref(new Date())
+// Order data from API
+const order = ref(null)
+const loading = ref(true)
+const error = ref(null)
 
-const orderItems = ref([
-  {
-    id: 1,
-    name: 'Sample Product 1',
-    quantity: 2,
-    price: 1299,
-    image: 'https://picsum.photos/200/200?random=1'
-  },
-  {
-    id: 2,
-    name: 'Sample Product 2',
-    quantity: 1,
-    price: 2599,
-    image: 'https://picsum.photos/200/200?random=2'
-  }
-])
+// Computed values from order data
+const orderNumber = computed(() => order.value?.order_number || '')
+const orderDate = computed(() => order.value?.created_at ? new Date(order.value.created_at) : new Date())
 
-const subtotal = ref(5197)
-const shipping = ref(150)
-const tax = ref(624) // 12%
-const total = ref(5971)
-
-const shippingAddress = ref({
-  name: 'Juan Dela Cruz',
-  address: 'Unit 123, Building A, Makati Avenue',
-  city: 'Makati',
-  state: 'Metro Manila',
-  postal_code: '1210',
-  phone: '+63 912 345 6789'
+const orderItems = computed(() => {
+  if (!order.value?.items) return []
+  
+  return order.value.items.map(item => ({
+    id: item.id,
+    name: item.product?.name || item.product_name || 'Product',
+    quantity: item.quantity,
+    price: parseFloat(item.price),
+    image: item.product?.images?.[0]?.image_url || 'https://via.placeholder.com/200'
+  }))
 })
 
-const paymentMethod = ref('Credit Card ending in 4242')
-const estimatedDelivery = ref('November 15-17, 2025')
+const subtotal = computed(() => parseFloat(order.value?.subtotal || 0))
+const shipping = computed(() => parseFloat(order.value?.shipping_cost || 0))
+const tax = computed(() => parseFloat(order.value?.tax || 0))
+const total = computed(() => parseFloat(order.value?.total || 0))
 
-onMounted(() => {
+const shippingAddress = computed(() => {
+  const addr = order.value?.shipping_address
+  if (!addr) return {}
+  
+  return {
+    name: addr.full_name || 'N/A',
+    address: `${addr.address_line1}${addr.address_line2 ? ', ' + addr.address_line2 : ''}`,
+    city: addr.city || '',
+    state: addr.state || '',
+    postal_code: addr.postal_code || '',
+    phone: addr.phone || ''
+  }
+})
+
+const paymentMethod = computed(() => {
+  const method = order.value?.payment_method || 'Not specified'
+  return method.charAt(0).toUpperCase() + method.slice(1).replace('_', ' ')
+})
+
+const estimatedDelivery = computed(() => {
+  if (!order.value?.created_at) return 'To be determined'
+  
+  const orderDate = new Date(order.value.created_at)
+  const estimatedStart = new Date(orderDate)
+  const estimatedEnd = new Date(orderDate)
+  
+  // Add 5-7 business days
+  estimatedStart.setDate(estimatedStart.getDate() + 5)
+  estimatedEnd.setDate(estimatedEnd.getDate() + 7)
+  
+  const options = { month: 'long', day: 'numeric', year: 'numeric' }
+  return `${estimatedStart.toLocaleDateString('en-US', options)} - ${estimatedEnd.toLocaleDateString('en-US', options)}`
+})
+
+onMounted(async () => {
   // Scroll to top
   window.scrollTo({ top: 0, behavior: 'smooth' })
+  
+  // Load order data from API
+  try {
+    const orderId = route.params.id
+    const orderNumber = route.query.order_number
+    
+    if (!orderId) {
+      error.value = 'Order ID not found'
+      loading.value = false
+      return
+    }
+    
+    const response = await orderService.getOrder(orderId)
+    
+    if (response.success) {
+      order.value = response.data
+    } else {
+      error.value = 'Failed to load order details'
+    }
+  } catch (err) {
+    console.error('Error loading order:', err)
+    error.value = 'Failed to load order details'
+  } finally {
+    loading.value = false
+  }
 })
 
 const formatPrice = (price) => {
