@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\VendorController;
 use App\Http\Controllers\Api\ImageUploadController;
+use App\Http\Controllers\Api\Admin\DashboardController;
 use App\Models\Order;
 
 /*
@@ -180,6 +181,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // ========================================
     
     Route::middleware(['role:admin|super-admin'])->prefix('admin')->group(function () {
+        
+        // Dashboard Statistics
+        Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
         
         // Category Management
         Route::post('/categories', [CategoryController::class, 'store']);

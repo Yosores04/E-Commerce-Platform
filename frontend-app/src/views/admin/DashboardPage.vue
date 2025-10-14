@@ -272,49 +272,36 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import { adminService } from '../../services/admin'
 
 // Current date and time
 const currentDate = ref('')
 const currentTime = ref('')
+const isLoading = ref(false)
 
 // Stats
 const stats = ref({
-  totalRevenue: 1250000,
-  totalOrders: 3847,
-  totalProducts: 256,
-  totalUsers: 1523,
+  totalRevenue: 0,
+  totalOrders: 0,
+  totalProducts: 0,
+  totalUsers: 0,
   orderStatus: {
-    pending: 45,
-    processing: 82,
-    shipped: 134,
-    delivered: 2891,
-    cancelled: 95
+    pending: 0,
+    processing: 0,
+    shipped: 0,
+    delivered: 0,
+    cancelled: 0
   }
 })
 
 // Revenue data for chart
-const revenueData = ref([
-  85000, 92000, 78000, 105000, 98000, 112000, 
-  125000, 118000, 135000, 142000, 156000, 168000
-])
+const revenueData = ref([])
 
 // Recent orders
-const recentOrders = ref([
-  { id: 1, orderNumber: 'ORD-2024-156', customer: 'Juan Dela Cruz', total: 5971, status: 'Processing' },
-  { id: 2, orderNumber: 'ORD-2024-155', customer: 'Maria Santos', total: 3899, status: 'Shipped' },
-  { id: 3, orderNumber: 'ORD-2024-154', customer: 'Pedro Reyes', total: 8499, status: 'Delivered' },
-  { id: 4, orderNumber: 'ORD-2024-153', customer: 'Ana Garcia', total: 2599, status: 'Pending' },
-  { id: 5, orderNumber: 'ORD-2024-152', customer: 'Carlos Lopez', total: 4299, status: 'Processing' }
-])
+const recentOrders = ref([])
 
 // Top products
-const topProducts = ref([
-  { id: 1, name: 'Merlot Reserve 2020', sales: 234, revenue: 373866, image: 'https://picsum.photos/seed/wine1/100/100' },
-  { id: 2, name: 'Cabernet Sauvignon', sales: 198, revenue: 257202, image: 'https://picsum.photos/seed/wine2/100/100' },
-  { id: 3, name: 'Chardonnay Classic', sales: 187, revenue: 186813, image: 'https://picsum.photos/seed/wine3/100/100' },
-  { id: 4, name: 'Pinot Noir Vintage', sales: 156, revenue: 280644, image: 'https://picsum.photos/seed/wine4/100/100' },
-  { id: 5, name: 'Rosé Wine Special', sales: 143, revenue: 185857, image: 'https://picsum.photos/seed/wine5/100/100' }
-])
+const topProducts = ref([])
 
 // Update time
 let timeInterval = null
@@ -332,9 +319,61 @@ const updateTime = () => {
   })
 }
 
-onMounted(() => {
+const loadDashboardData = async () => {
+  isLoading.value = true
+  try {
+    const response = await adminService.getDashboardStats()
+    
+    if (response.success && response.data) {
+      const data = response.data
+      
+      // Update stats
+      stats.value = {
+        totalRevenue: data.totalRevenue || 0,
+        totalOrders: data.totalOrders || 0,
+        totalProducts: data.totalProducts || 0,
+        totalUsers: data.totalUsers || 0,
+        orderStatus: data.orderStatus || {
+          pending: 0,
+          processing: 0,
+          shipped: 0,
+          delivered: 0,
+          cancelled: 0
+        }
+      }
+      
+      // Update revenue chart data
+      revenueData.value = (data.revenueByMonth || []).map(item => item.revenue)
+      
+      // Update recent orders
+      recentOrders.value = (data.recentOrders || []).map(order => ({
+        id: order.id,
+        orderNumber: order.order_number,
+        customer: order.customer,
+        total: order.total,
+        status: order.status.charAt(0).toUpperCase() + order.status.slice(1)
+      }))
+      
+      // Update top products
+      topProducts.value = (data.topProducts || []).map(product => ({
+        id: product.id,
+        name: product.name,
+        sales: product.sales,
+        revenue: product.revenue,
+        image: 'https://via.placeholder.com/100/5B2333/F7F4F3?text=Product'
+      }))
+    }
+  } catch (error) {
+    console.error('Failed to load dashboard data:', error)
+  } finally {
+    isLoading.value = false
+  }
+}
+
+onMounted(async () => {
   updateTime()
   timeInterval = setInterval(updateTime, 1000)
+  await loadDashboardData()
 })
 
 onUnmounted(() => {
