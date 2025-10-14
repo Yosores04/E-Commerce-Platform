@@ -96,41 +96,53 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import DefaultLayout from '../layouts/DefaultLayout.vue'
 import ProductCard from '../components/ProductCard.vue'
-import { productsService } from '../services/products'
+import { productService } from '../services/product'
+import { categoryService } from '../services/category'
 
 const router = useRouter()
 const products = ref([])
-const categories = ref([
-  { id: 1, name: 'Electronics', icon: '📱' },
-  { id: 2, name: 'Fashion', icon: '👗' },
-  { id: 3, name: 'Home & Living', icon: '🏠' },
-  { id: 4, name: 'Beauty', icon: '💄' },
-  { id: 5, name: 'Sports', icon: '⚽' },
-  { id: 6, name: 'Books', icon: '📚' },
-  { id: 7, name: 'Food', icon: '🍔' },
-  { id: 8, name: 'Toys', icon: '🧸' }
-])
+const categories = ref([])
 const isLoading = ref(false)
+const isCategoriesLoading = ref(false)
 
 onMounted(async () => {
-  await loadProducts()
+  await Promise.all([loadProducts(), loadCategories()])
 })
 
 const loadProducts = async () => {
   isLoading.value = true
   try {
-    const response = await productsService.getProducts({ limit: 8 })
-    // Handle Laravel pagination structure
-    if (response.data && Array.isArray(response.data.data)) {
-      products.value = response.data.data
-    } else if (Array.isArray(response.data)) {
-      products.value = response.data
+    const response = await productService.getFeaturedProducts(8)
+    // Backend returns: { success: true, data: { data: [...], current_page, last_page, etc } }
+    if (response.success && response.data) {
+      products.value = response.data.data || []
     }
   } catch (error) {
     console.error('Failed to load products:', error)
     products.value = []
   } finally {
     isLoading.value = false
+  }
+}
+
+const loadCategories = async () => {
+  isCategoriesLoading.value = true
+  try {
+    const response = await categoryService.getCategories({ per_page: 8 })
+    // Backend returns: { success: true, data: { data: [...categories] } }
+    if (response.success && response.data) {
+      // Get parent categories only for homepage display
+      const allCategories = response.data.data || []
+      categories.value = allCategories
+        .filter(cat => !cat.parent_id) // Only parent categories
+        .slice(0, 8) // Limit to 8
+    }
+  } catch (error) {
+    console.error('Failed to load categories:', error)
+    // Fallback to some categories if API fails
+    categories.value = []
+  } finally {
+    isCategoriesLoading.value = false
   }
 }
 
