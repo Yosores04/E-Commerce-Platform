@@ -95,7 +95,7 @@
                 </div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">{{ product.category }}</div>
+                <div class="text-sm text-gray-900">{{ getCategoryName(product) }}</div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="text-sm font-semibold text-xerxia-wine">₱{{ formatNumber(product.price) }}</div>
@@ -302,8 +302,10 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import AdminLayout from '../../layouts/AdminLayout.vue'
+import { productService } from '../../services/product'
+import { categoryService } from '../../services/category'
 
 // Search and filters
 const searchQuery = ref('')
@@ -314,11 +316,15 @@ const filterStatus = ref('')
 const showAddModal = ref(false)
 const showEditModal = ref(false)
 
+// Loading state
+const loading = ref(false)
+const error = ref(null)
+
 // Form data
 const formData = ref({
   name: '',
   sku: '',
-  category: '',
+  category_id: '',
   price: 0,
   stock: 0,
   status: 'active',
@@ -326,76 +332,41 @@ const formData = ref({
   image: ''
 })
 
-// Mock products data
-const products = ref([
-  {
-    id: 1,
-    name: 'Merlot Reserve 2020',
-    sku: 'WN-MR-2020',
-    category: 'Red Wine',
-    price: 1599,
-    stock: 45,
-    status: 'active',
-    image: 'https://picsum.photos/seed/wine1/100/100'
-  },
-  {
-    id: 2,
-    name: 'Cabernet Sauvignon',
-    sku: 'WN-CS-2021',
-    category: 'Red Wine',
-    price: 1299,
-    stock: 32,
-    status: 'active',
-    image: 'https://picsum.photos/seed/wine2/100/100'
-  },
-  {
-    id: 3,
-    name: 'Chardonnay Classic',
-    sku: 'WN-CC-2022',
-    category: 'White Wine',
-    price: 999,
-    stock: 0,
-    status: 'out-of-stock',
-    image: 'https://picsum.photos/seed/wine3/100/100'
-  },
-  {
-    id: 4,
-    name: 'Champagne Deluxe',
-    sku: 'WN-CD-2020',
-    category: 'Sparkling',
-    price: 2599,
-    stock: 18,
-    status: 'active',
-    image: 'https://picsum.photos/seed/wine4/100/100'
-  },
-  {
-    id: 5,
-    name: 'Rosé Wine Special',
-    sku: 'WN-RS-2022',
-    category: 'Rosé',
-    price: 1199,
-    stock: 28,
-    status: 'active',
-    image: 'https://picsum.photos/seed/wine5/100/100'
-  },
-  {
-    id: 6,
-    name: 'Pinot Noir Vintage',
-    sku: 'WN-PN-2019',
-    category: 'Red Wine',
-    price: 1799,
-    stock: 12,
-    status: 'inactive',
-    image: 'https://picsum.photos/seed/wine6/100/100'
+// Data from API
+const products = ref([])
+const categories = ref([])
+
+// Fetch products from API
+const fetchProducts = async () => {
+  try {
+    loading.value = true
+    error.value = null
+    const response = await productService.getProducts()
+    products.value = response.data || response
+  } catch (err) {
+    console.error('Error fetching products:', err)
+    error.value = 'Failed to load products'
+  } finally {
+    loading.value = false
   }
-])
+}
+
+// Fetch categories from API
+const fetchCategories = async () => {
+  try {
+    const response = await categoryService.getCategories()
+    categories.value = response.data || response
+  } catch (err) {
+    console.error('Error fetching categories:', err)
+  }
+}
 
 // Filtered products
 const filteredProducts = computed(() => {
   return products.value.filter(product => {
-    const matchesSearch = product.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-                          product.sku.toLowerCase().includes(searchQuery.value.toLowerCase())
-    const matchesCategory = !filterCategory.value || product.category === filterCategory.value
+    const matchesSearch = product.name?.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+                          product.sku?.toLowerCase().includes(searchQuery.value.toLowerCase())
+    const matchesCategory = !filterCategory.value || product.category_id == filterCategory.value
     const matchesStatus = !filterStatus.value || product.status === filterStatus.value
     
     return matchesSearch && matchesCategory && matchesStatus
@@ -403,33 +374,43 @@ const filteredProducts = computed(() => {
 })
 
 const editProduct = (product) => {
-  formData.value = { ...product }
+  formData.value = { 
+    ...product,
+    category_id: product.category_id || product.category?.id || ''
+  }
   showEditModal.value = true
 }
 
-const deleteProduct = (id) => {
+const deleteProduct = async (id) => {
   if (confirm('Are you sure you want to delete this product?')) {
-    products.value = products.value.filter(p => p.id !== id)
+    try {
+      await productService.deleteProduct(id)
+      await fetchProducts()
+    } catch (err) {
+      console.error('Error deleting product:', err)
+      alert('Failed to delete product')
+    }
   }
 }
 
-const saveProduct = () => {
-  if (showEditModal.value) {
-    // Update existing product
-    const index = products.value.findIndex(p => p.id === formData.value.id)
-    if (index !== -1) {
-      products.value[index] = { ...formData.value }
+const saveProduct = async () => {
+  try {
+    loading.value = true
+    if (showEditModal.value) {
+      // Update existing product
+      await productService.updateProduct(formData.value.id, formData.value)
+    } else {
+      // Add new product
+      await productService.createProduct(formData.value)
     }
-  } else {
-    // Add new product
-    const newProduct = {
-      ...formData.value,
-      id: Date.now(),
-      image: formData.value.image || 'https://picsum.photos/seed/wine' + Date.now() + '/100/100'
-    }
-    products.value.push(newProduct)
+    await fetchProducts()
+    closeModal()
+  } catch (err) {
+    console.error('Error saving product:', err)
+    alert('Failed to save product')
+  } finally {
+    loading.value = false
   }
-  closeModal()
 }
 
 const closeModal = () => {
@@ -438,7 +419,7 @@ const closeModal = () => {
   formData.value = {
     name: '',
     sku: '',
-    category: '',
+    category_id: '',
     price: 0,
     stock: 0,
     status: 'active',
@@ -448,15 +429,28 @@ const closeModal = () => {
 }
 
 const formatNumber = (num) => {
-  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  return num?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') || '0'
 }
 
 const getStatusClass = (status) => {
   const classes = {
     'active': 'bg-green-100 text-green-800',
     'inactive': 'bg-gray-100 text-gray-800',
-    'out-of-stock': 'bg-red-100 text-red-800'
+    'out-of-stock': 'bg-red-100 text-red-800',
+    'out_of_stock': 'bg-red-100 text-red-800'
   }
   return classes[status] || 'bg-gray-100 text-gray-800'
 }
+
+const getCategoryName = (product) => {
+  if (product.category?.name) return product.category.name
+  const cat = categories.value.find(c => c.id === product.category_id)
+  return cat?.name || 'N/A'
+}
+
+// Load data on mount
+onMounted(() => {
+  fetchProducts()
+  fetchCategories()
+})
 </script>
