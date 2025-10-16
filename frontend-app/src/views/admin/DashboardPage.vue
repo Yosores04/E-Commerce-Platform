@@ -1,86 +1,87 @@
 <template>
-  <div class="min-h-screen bg-white-smoke">
-    <!-- Header -->
-    <div class="bg-white border-b border-gray-200">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div class="flex items-center justify-between">
-          <div>
-            <h1 class="text-3xl font-bold text-xerxia-wine">Admin Dashboard</h1>
-            <p class="text-gray-600 mt-1">Welcome back, Admin</p>
-          </div>
-          <div class="text-right">
-            <p class="text-sm text-gray-600">{{ currentDate }}</p>
-            <p class="text-sm text-gray-600">{{ currentTime }}</p>
+  <DefaultLayout>
+    <div class="bg-whitesmoke min-h-screen">
+      <!-- Page Header -->
+      <div class="bg-gradient-to-r from-wine via-burgundy to-wine text-white">
+        <div class="container mx-auto px-4 py-8">
+          <div class="flex items-center justify-between">
+            <div>
+              <h1 class="text-3xl font-bold mb-2">Admin Dashboard</h1>
+              <p class="text-white/90">Welcome back, Admin</p>
+            </div>
+            <div class="text-right">
+              <p class="text-sm text-white/80">{{ currentDate }}</p>
+              <p class="text-sm text-white/80">{{ currentTime }}</p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="container mx-auto px-4 py-8">
       <!-- Stats Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <!-- Total Revenue -->
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow border border-neutral-200 p-6 group">
           <div class="flex items-center justify-between mb-4">
-            <div class="flex items-center justify-center w-12 h-12 rounded-lg bg-green-100">
-              <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="flex items-center justify-center w-12 h-12 rounded-lg bg-gradient-to-br from-wine to-burgundy-600 group-hover:scale-110 transition-transform">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <span class="text-sm font-medium text-green-600">+12.5%</span>
+            <span class="text-sm font-semibold text-green-600 bg-green-50 px-3 py-1 rounded-full">+12.5%</span>
           </div>
           <h3 class="text-2xl font-bold text-gray-900 mb-1">₱{{ formatNumber(stats.totalRevenue) }}</h3>
-          <p class="text-sm text-gray-600">Total Revenue</p>
+          <p class="text-sm text-gray-600 font-medium">Total Revenue</p>
         </div>
 
         <!-- Total Orders -->
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow border border-neutral-200 p-6 group">
           <div class="flex items-center justify-between mb-4">
-            <div class="flex items-center justify-center w-12 h-12 rounded-lg bg-blue-100">
-              <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="flex items-center justify-center w-12 h-12 rounded-lg bg-gradient-to-br from-wine to-burgundy-600 group-hover:scale-110 transition-transform">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
               </svg>
             </div>
-            <span class="text-sm font-medium text-blue-600">+8.2%</span>
+            <span class="text-sm font-semibold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">+8.2%</span>
           </div>
           <h3 class="text-2xl font-bold text-gray-900 mb-1">{{ formatNumber(stats.totalOrders) }}</h3>
-          <p class="text-sm text-gray-600">Total Orders</p>
+          <p class="text-sm text-gray-600 font-medium">Total Orders</p>
         </div>
 
         <!-- Total Products -->
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow border border-neutral-200 p-6 group">
           <div class="flex items-center justify-between mb-4">
-            <div class="flex items-center justify-center w-12 h-12 rounded-lg bg-purple-100">
-              <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="flex items-center justify-center w-12 h-12 rounded-lg bg-gradient-to-br from-wine to-burgundy-600 group-hover:scale-110 transition-transform">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
               </svg>
             </div>
-            <span class="text-sm font-medium text-purple-600">+15</span>
+            <span class="text-sm font-semibold text-wine bg-wine/10 px-3 py-1 rounded-full">+15</span>
           </div>
           <h3 class="text-2xl font-bold text-gray-900 mb-1">{{ formatNumber(stats.totalProducts) }}</h3>
-          <p class="text-sm text-gray-600">Total Products</p>
+          <p class="text-sm text-gray-600 font-medium">Total Products</p>
         </div>
 
         <!-- Total Users -->
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow border border-neutral-200 p-6 group">
           <div class="flex items-center justify-between mb-4">
-            <div class="flex items-center justify-center w-12 h-12 rounded-lg bg-yellow-100">
-              <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="flex items-center justify-center w-12 h-12 rounded-lg bg-gradient-to-br from-wine to-burgundy-600 group-hover:scale-110 transition-transform">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
             </div>
-            <span class="text-sm font-medium text-yellow-600">+23</span>
+            <span class="text-sm font-semibold text-amber-600 bg-amber-50 px-3 py-1 rounded-full">+23</span>
           </div>
           <h3 class="text-2xl font-bold text-gray-900 mb-1">{{ formatNumber(stats.totalUsers) }}</h3>
-          <p class="text-sm text-gray-600">Total Users</p>
+          <p class="text-sm text-gray-600 font-medium">Total Users</p>
         </div>
       </div>
 
       <!-- Charts and Recent Activity -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         <!-- Revenue Chart -->
-        <div class="lg:col-span-2 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 class="text-lg font-semibold text-gray-900 mb-6">Revenue Overview</h2>
+        <div class="lg:col-span-2 bg-white rounded-xl shadow-md border border-neutral-200 p-6">
+          <h2 class="text-lg font-bold text-gray-900 mb-6">Revenue Overview</h2>
           <div class="h-64 flex items-end justify-between gap-2">
             <div
               v-for="(value, index) in revenueData"
@@ -110,8 +111,8 @@
         </div>
 
         <!-- Order Status -->
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 class="text-lg font-semibold text-gray-900 mb-6">Order Status</h2>
+        <div class="bg-white rounded-xl shadow-md border border-neutral-200 p-6">
+          <h2 class="text-lg font-bold text-gray-900 mb-6">Order Status</h2>
           <div class="space-y-4">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-3">
@@ -155,28 +156,28 @@
       <!-- Recent Orders and Top Products -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Recent Orders -->
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="bg-white rounded-xl shadow-md border border-neutral-200 p-6">
           <div class="flex items-center justify-between mb-6">
-            <h2 class="text-lg font-semibold text-gray-900">Recent Orders</h2>
-            <router-link to="/admin/orders" class="text-sm text-xerxia-wine hover:text-burgundy font-medium">
+            <h2 class="text-lg font-bold text-gray-900">Recent Orders</h2>
+            <router-link to="/admin/orders" class="text-sm text-wine hover:text-burgundy font-semibold transition-colors">
               View All →
             </router-link>
           </div>
-          <div class="space-y-4">
+          <div class="space-y-3">
             <div
               v-for="order in recentOrders"
               :key="order.id"
-              class="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:border-xerxia-wine transition-colors cursor-pointer"
+              class="flex items-center justify-between p-4 border border-neutral-200 rounded-lg hover:border-wine hover:shadow-md transition-all cursor-pointer"
             >
               <div class="flex-1">
                 <p class="font-semibold text-gray-900">{{ order.orderNumber }}</p>
                 <p class="text-sm text-gray-600">{{ order.customer }}</p>
               </div>
               <div class="text-right">
-                <p class="font-semibold text-xerxia-wine">₱{{ formatNumber(order.total) }}</p>
+                <p class="font-bold text-wine">₱{{ formatNumber(order.total) }}</p>
                 <span
                   :class="getStatusClass(order.status)"
-                  class="text-xs px-2 py-1 rounded-full"
+                  class="text-xs px-2.5 py-1 rounded-full font-medium"
                 >
                   {{ order.status }}
                 </span>
@@ -186,10 +187,10 @@
         </div>
 
         <!-- Top Products -->
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="bg-white rounded-xl shadow-md border border-neutral-200 p-6">
           <div class="flex items-center justify-between mb-6">
-            <h2 class="text-lg font-semibold text-gray-900">Top Products</h2>
-            <router-link to="/admin/products" class="text-sm text-xerxia-wine hover:text-burgundy font-medium">
+            <h2 class="text-lg font-bold text-gray-900">Top Products</h2>
+            <router-link to="/admin/products" class="text-sm text-wine hover:text-burgundy font-semibold transition-colors">
               View All →
             </router-link>
           </div>
@@ -220,58 +221,60 @@
       <div class="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
         <router-link
           to="/admin/products"
-          class="flex items-center gap-3 p-4 bg-white rounded-lg shadow-sm border border-gray-200 hover:border-xerxia-wine transition-colors"
+          class="flex items-center gap-3 p-4 bg-white rounded-xl shadow-md border border-neutral-200 hover:border-wine hover:shadow-lg transition-all group"
         >
-          <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-xerxia-wine text-white">
+          <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-wine to-burgundy-600 text-white group-hover:scale-110 transition-transform">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
             </svg>
           </div>
-          <span class="font-medium text-gray-900">Products</span>
+          <span class="font-semibold text-gray-900">Products</span>
         </router-link>
 
         <router-link
           to="/admin/orders"
-          class="flex items-center gap-3 p-4 bg-white rounded-lg shadow-sm border border-gray-200 hover:border-xerxia-wine transition-colors"
+          class="flex items-center gap-3 p-4 bg-white rounded-xl shadow-md border border-neutral-200 hover:border-wine hover:shadow-lg transition-all group"
         >
-          <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-xerxia-wine text-white">
+          <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-wine to-burgundy-600 text-white group-hover:scale-110 transition-transform">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
             </svg>
           </div>
-          <span class="font-medium text-gray-900">Orders</span>
+          <span class="font-semibold text-gray-900">Orders</span>
         </router-link>
 
         <router-link
           to="/admin/categories"
-          class="flex items-center gap-3 p-4 bg-white rounded-lg shadow-sm border border-gray-200 hover:border-xerxia-wine transition-colors"
+          class="flex items-center gap-3 p-4 bg-white rounded-xl shadow-md border border-neutral-200 hover:border-wine hover:shadow-lg transition-all group"
         >
-          <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-xerxia-wine text-white">
+          <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-wine to-burgundy-600 text-white group-hover:scale-110 transition-transform">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
             </svg>
           </div>
-          <span class="font-medium text-gray-900">Categories</span>
+          <span class="font-semibold text-gray-900">Categories</span>
         </router-link>
 
         <router-link
           to="/admin/vendors"
-          class="flex items-center gap-3 p-4 bg-white rounded-lg shadow-sm border border-gray-200 hover:border-xerxia-wine transition-colors"
+          class="flex items-center gap-3 p-4 bg-white rounded-xl shadow-md border border-neutral-200 hover:border-wine hover:shadow-lg transition-all group"
         >
-          <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-xerxia-wine text-white">
+          <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-wine to-burgundy-600 text-white group-hover:scale-110 transition-transform">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>
           </div>
-          <span class="font-medium text-gray-900">Vendors</span>
+          <span class="font-semibold text-gray-900">Vendors</span>
         </router-link>
       </div>
     </div>
-  </div>
+    </div>
+  </DefaultLayout>
 </template>
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import DefaultLayout from '../../layouts/DefaultLayout.vue'
 import { adminService } from '../../services/admin'
 
 // Current date and time
