@@ -1,16 +1,11 @@
 <template>
-  <div class="min-h-screen bg-white-smoke">
-    <!-- Header -->
-    <div class="bg-white border-b border-gray-200">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div>
-          <h1 class="text-3xl font-bold text-xerxia-wine">Orders Management</h1>
-          <p class="text-gray-600 mt-1">Manage and fulfill customer orders</p>
-        </div>
+  <AdminLayout>
+    <div class="p-8">
+      <!-- Header -->
+      <div class="mb-6">
+        <h1 class="text-3xl font-bold text-xerxia-wine">Orders Management</h1>
+        <p class="text-gray-600 mt-1">Manage and fulfill customer orders</p>
       </div>
-    </div>
-
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <!-- Stats Cards -->
       <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
@@ -248,11 +243,12 @@
         </div>
       </div>
     </div>
-  </div>
+  </AdminLayout>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
+import AdminLayout from '../../layouts/AdminLayout.vue'
 
 // Search and filters
 const searchQuery = ref('')

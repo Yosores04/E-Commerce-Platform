@@ -1,27 +1,22 @@
 <template>
-  <div class="min-h-screen bg-white-smoke">
-    <!-- Header -->
-    <div class="bg-white border-b border-gray-200">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div class="flex items-center justify-between">
-          <div>
-            <h1 class="text-3xl font-bold text-xerxia-wine">Products Management</h1>
-            <p class="text-gray-600 mt-1">Manage your product inventory</p>
-          </div>
-          <button
-            @click="showAddModal = true"
-            class="px-6 py-3 bg-xerxia-wine text-white rounded-lg hover:bg-burgundy transition-colors font-medium flex items-center gap-2"
-          >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-            </svg>
-            Add Product
-          </button>
+  <AdminLayout>
+    <div class="p-8">
+      <!-- Page Header -->
+      <div class="mb-6 flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl font-bold text-gray-900 mb-2">Products Management</h1>
+          <p class="text-gray-600">Manage your product inventory</p>
         </div>
+        <button
+          @click="showAddModal = true"
+          class="px-6 py-3 bg-gradient-to-r from-wine to-burgundy-600 text-white rounded-lg hover:shadow-lg transition-all font-semibold flex items-center gap-2"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          Add Product
+        </button>
       </div>
-    </div>
-
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <!-- Filters and Search -->
       <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -303,11 +298,12 @@
         </form>
       </div>
     </div>
-  </div>
+  </AdminLayout>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
+import AdminLayout from '../../layouts/AdminLayout.vue'
 
 // Search and filters
 const searchQuery = ref('')
