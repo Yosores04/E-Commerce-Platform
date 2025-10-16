@@ -78,3 +78,52 @@ body {
 .spinner {
   @apply inline-block w-6 h-6 border-4 border-gray-200 border-t-primary-600 rounded-full animate-spin;
 }
+
+/* Custom Color Utilities */
+.bg-wine {
+  background-color: #5B2333;
+}
+
+.text-wine {
+  color: #5B2333;
+}
+
+.border-wine {
+  border-color: #5B2333;
+}
+
+.hover\:bg-wine:hover {
+  background-color: #5B2333;
+}
+
+.hover\:text-wine:hover {
+  color: #5B2333;
+}
+
+.hover\:border-wine:hover {
+  border-color: #5B2333;
+}
+
+.bg-xerxia-wine {
+  background-color: #5B2333;
+}
+
+.text-xerxia-wine {
+  color: #5B2333;
+}
+
+.bg-burgundy {
+  background-color: #b02344;
+}
+
+.hover\:bg-burgundy:hover {
+  background-color: #b02344;
+}
+
+.bg-whitesmoke {
+  background-color: #F7F4F3;
+}
+
+.bg-white-smoke {
+  background-color: #F7F4F3;
+}
