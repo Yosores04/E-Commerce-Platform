@@ -20,12 +20,12 @@ class ProductController extends Controller
     public function index(Request $request): JsonResponse
     {
         $query = Product::with([
-            'vendor.user',
+            'vendor',  // Removed .user nesting
             'category',
             'images',
-            'variants'
+            // 'variants' // Temporarily removed to test
             // 'tags' // TODO: Add back when ProductTag model is created
-        ])->active();
+        ]); // Temporarily removed ->active() to see all products
 
         // Filter by category
         if ($request->has('category_id')) {

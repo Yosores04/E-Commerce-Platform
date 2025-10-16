@@ -358,7 +358,7 @@ const fetchCategories = async () => {
   try {
     loading.value = true
     const response = await categoryService.getCategories()
-    categories.value = response.data || response
+    categories.value = response.data?.data || response.data || response
   } catch (error) {
     console.error('Error fetching categories:', error)
   } finally {

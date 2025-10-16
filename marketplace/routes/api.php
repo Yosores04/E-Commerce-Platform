@@ -235,3 +235,19 @@ Route::fallback(function () {
         'message' => 'Route not found'
     ], 404);
 });
+
+// DEBUG ROUTE - Remove after testing
+Route::get('/debug/products', function () {
+    $total = \App\Models\Product::count();
+    $active = \App\Models\Product::where('status', 'active')->count();
+    $first = \App\Models\Product::with(['vendor', 'category', 'images'])->first();
+    
+    return response()->json([
+        'total_products' => $total,
+        'active_products' => $active,
+        'first_product' => $first,
+        'categories_count' => \App\Models\Category::count(),
+        'has_vendor' => $first ? ($first->vendor ? 'Yes' : 'No') : 'N/A',
+        'has_category' => $first ? ($first->category ? 'Yes' : 'No') : 'N/A',
+    ]);
+});

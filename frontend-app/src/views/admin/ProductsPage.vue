@@ -9,6 +9,14 @@
         <p>Error: {{ error || 'None' }}</p>
         <p>Categories Count: {{ categories.length }}</p>
         <p>API Base URL: http://127.0.0.1:8000/api</p>
+        <p>Auth Token: {{ authStore.token ? 'Present ✓' : 'Missing ✗' }}</p>
+        <p>User: {{ authStore.user?.name || 'Not logged in' }} ({{ authStore.user?.email }})</p>
+        <button @click="testApiConnection" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded mr-2">
+          Test API Connection
+        </button>
+        <button @click="testDatabase" class="mt-2 px-4 py-2 bg-green-500 text-white rounded">
+          Check Database
+        </button>
       </div>
       
       <!-- Page Header -->
@@ -327,6 +335,11 @@ import { ref, computed, onMounted } from 'vue'
 import AdminLayout from '../../layouts/AdminLayout.vue'
 import { productService } from '../../services/product'
 import { categoryService } from '../../services/category'
+import { useAuthStore } from '../../stores/auth'
+import api from '../../services/api'
+
+// Auth store
+const authStore = useAuthStore()
 
 // Search and filters
 const searchQuery = ref('')
@@ -365,7 +378,8 @@ const fetchProducts = async () => {
     console.log('Fetching products from API...')
     const response = await productService.getProducts()
     console.log('Products API response:', response)
-    products.value = response.data || response
+    // Extract products from paginated response
+    products.value = response.data?.data || response.data || response
     console.log('Products loaded:', products.value.length)
   } catch (err) {
     console.error('Error fetching products:', err)
@@ -380,7 +394,7 @@ const fetchProducts = async () => {
 const fetchCategories = async () => {
   try {
     const response = await categoryService.getCategories()
-    categories.value = response.data || response
+    categories.value = response.data?.data || response.data || response
   } catch (err) {
     console.error('Error fetching categories:', err)
   }
@@ -450,6 +464,32 @@ const closeModal = () => {
     status: 'active',
     description: '',
     image: ''
+  }
+}
+
+// Test API connection
+const testApiConnection = async () => {
+  try {
+    console.log('Testing API connection...')
+    console.log('Token:', authStore.token)
+    const response = await api.get('/products')
+    console.log('Products response:', response)
+    alert(`API Test Success! Found ${response.data?.data?.length || 0} products`)
+  } catch (err) {
+    console.error('API Test Error:', err)
+    alert(`API Error: ${err.response?.status} - ${err.response?.data?.message || err.message}`)
+  }
+}
+
+// Test database directly
+const testDatabase = async () => {
+  try {
+    const response = await api.get('/debug/products')
+    console.log('Debug response:', response.data)
+    alert(`Database Check:\nTotal Products: ${response.data.total_products}\nActive Products: ${response.data.active_products}\nCategories: ${response.data.categories_count}`)
+  } catch (err) {
+    console.error('Debug Error:', err)
+    alert(`Debug Error: ${err.message}`)
   }
 }
 

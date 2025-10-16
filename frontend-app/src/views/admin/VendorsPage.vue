@@ -411,7 +411,7 @@ const fetchUsers = async () => {
   try {
     loading.value = true
     const response = await adminService.getUsers()
-    users.value = response.data || response
+    users.value = response.data?.data || response.data || response
   } catch (error) {
     console.error('Error fetching users:', error)
   } finally {
@@ -424,7 +424,7 @@ const fetchVendors = async () => {
   try {
     loading.value = true
     const response = await adminService.getVendors()
-    const vendors = response.data || response
+    const vendors = response.data?.data || response.data || response
     // Add vendors to users list with role='vendor'
     const vendorUsers = vendors.map(v => ({
       ...v,

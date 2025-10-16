@@ -292,7 +292,7 @@ const fetchOrders = async () => {
     })
     
     console.log('Orders API response:', response)
-    orders.value = (response.data || response).map(order => ({
+    orders.value = (response.data?.data || response.data || response).map(order => ({
       ...order,
       itemsCount: order.items?.length || order.order_items?.length || 0,
       items: order.items || order.order_items || []
