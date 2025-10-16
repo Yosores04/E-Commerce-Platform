@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\VendorController;
+use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\ImageUploadController;
 use App\Http\Controllers\Api\Admin\DashboardController;
 use App\Models\Order;
@@ -215,13 +216,13 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::put('/{id}/status', [OrderController::class, 'updateStatus']);
         });
         
-        // User Management (TODO: Implement in next sprint)
-        // Route::prefix('users')->group(function () {
-        //     Route::get('/', [UserController::class, 'index']);
-        //     Route::get('/{id}', [UserController::class, 'show']);
-        //     Route::put('/{id}', [UserController::class, 'update']);
-        //     Route::delete('/{id}', [UserController::class, 'destroy']);
-        // });
+        // User Management
+        Route::prefix('users')->group(function () {
+            Route::get('/', [UserController::class, 'index']);
+            Route::get('/{id}', [UserController::class, 'show']);
+            Route::put('/{id}', [UserController::class, 'update']);
+            Route::delete('/{id}', [UserController::class, 'destroy']);
+        });
     });
 });
 
@@ -234,20 +235,4 @@ Route::fallback(function () {
         'success' => false,
         'message' => 'Route not found'
     ], 404);
-});
-
-// DEBUG ROUTE - Remove after testing
-Route::get('/debug/products', function () {
-    $total = \App\Models\Product::count();
-    $active = \App\Models\Product::where('status', 'active')->count();
-    $first = \App\Models\Product::with(['vendor', 'category', 'images'])->first();
-    
-    return response()->json([
-        'total_products' => $total,
-        'active_products' => $active,
-        'first_product' => $first,
-        'categories_count' => \App\Models\Category::count(),
-        'has_vendor' => $first ? ($first->vendor ? 'Yes' : 'No') : 'N/A',
-        'has_category' => $first ? ($first->category ? 'Yes' : 'No') : 'N/A',
-    ]);
 });

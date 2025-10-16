@@ -1,24 +1,6 @@
 <template>
   <AdminLayout>
     <div class="p-8">
-      <!-- Debug Info -->
-      <div class="bg-gray-100 border border-gray-300 rounded-lg p-4 mb-4 text-sm">
-        <p><strong>Debug Info:</strong></p>
-        <p>Products Count: {{ products.length }}</p>
-        <p>Loading: {{ loading }}</p>
-        <p>Error: {{ error || 'None' }}</p>
-        <p>Categories Count: {{ categories.length }}</p>
-        <p>API Base URL: http://127.0.0.1:8000/api</p>
-        <p>Auth Token: {{ authStore.token ? 'Present ✓' : 'Missing ✗' }}</p>
-        <p>User: {{ authStore.user?.name || 'Not logged in' }} ({{ authStore.user?.email }})</p>
-        <button @click="testApiConnection" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded mr-2">
-          Test API Connection
-        </button>
-        <button @click="testDatabase" class="mt-2 px-4 py-2 bg-green-500 text-white rounded">
-          Check Database
-        </button>
-      </div>
-      
       <!-- Page Header -->
       <div class="mb-6 flex items-center justify-between">
         <div>
@@ -113,7 +95,7 @@
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="flex items-center">
                   <img
-                    :src="product.image"
+                    :src="product.images?.[0]?.image_path || product.image || 'https://via.placeholder.com/150'"
                     :alt="product.name"
                     class="w-12 h-12 rounded-lg object-cover"
                   />
