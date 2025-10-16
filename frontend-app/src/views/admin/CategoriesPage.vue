@@ -323,8 +323,9 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import AdminLayout from '../../layouts/AdminLayout.vue'
+import { categoryService } from '../../services/category'
 
 // Search and filters
 const searchQuery = ref('')
@@ -334,6 +335,9 @@ const filterType = ref('')
 // Modals
 const showAddModal = ref(false)
 const showEditModal = ref(false)
+
+// Loading state
+const loading = ref(false)
 
 // Form data
 const formData = ref({
@@ -346,109 +350,21 @@ const formData = ref({
   description: ''
 })
 
-// Mock categories data
-const categories = ref([
-  {
-    id: 1,
-    name: 'Red Wines',
-    slug: 'red-wines',
-    parent_id: null,
-    status: 'active',
-    color: '#8B0000',
-    products_count: 45,
-    sort_order: 1
-  },
-  {
-    id: 2,
-    name: 'White Wines',
-    slug: 'white-wines',
-    parent_id: null,
-    status: 'active',
-    color: '#FFD700',
-    products_count: 32,
-    sort_order: 2
-  },
-  {
-    id: 3,
-    name: 'Sparkling Wines',
-    slug: 'sparkling-wines',
-    parent_id: null,
-    status: 'active',
-    color: '#B8860B',
-    products_count: 18,
-    sort_order: 3
-  },
-  {
-    id: 4,
-    name: 'Rosé Wines',
-    slug: 'rose-wines',
-    parent_id: null,
-    status: 'active',
-    color: '#FFB6C1',
-    products_count: 24,
-    sort_order: 4
-  },
-  {
-    id: 5,
-    name: 'Merlot',
-    slug: 'merlot',
-    parent_id: 1,
-    status: 'active',
-    color: '#8B0000',
-    products_count: 12,
-    sort_order: 1
-  },
-  {
-    id: 6,
-    name: 'Cabernet Sauvignon',
-    slug: 'cabernet-sauvignon',
-    parent_id: 1,
-    status: 'active',
-    color: '#8B0000',
-    products_count: 15,
-    sort_order: 2
-  },
-  {
-    id: 7,
-    name: 'Pinot Noir',
-    slug: 'pinot-noir',
-    parent_id: 1,
-    status: 'active',
-    color: '#8B0000',
-    products_count: 10,
-    sort_order: 3
-  },
-  {
-    id: 8,
-    name: 'Chardonnay',
-    slug: 'chardonnay',
-    parent_id: 2,
-    status: 'active',
-    color: '#FFD700',
-    products_count: 18,
-    sort_order: 1
-  },
-  {
-    id: 9,
-    name: 'Sauvignon Blanc',
-    slug: 'sauvignon-blanc',
-    parent_id: 2,
-    status: 'active',
-    color: '#FFD700',
-    products_count: 14,
-    sort_order: 2
-  },
-  {
-    id: 10,
-    name: 'Champagne',
-    slug: 'champagne',
-    parent_id: 3,
-    status: 'active',
-    color: '#B8860B',
-    products_count: 12,
-    sort_order: 1
+// Categories data from API
+const categories = ref([])
+
+// Fetch categories from API
+const fetchCategories = async () => {
+  try {
+    loading.value = true
+    const response = await categoryService.getCategories()
+    categories.value = response.data || response
+  } catch (error) {
+    console.error('Error fetching categories:', error)
+  } finally {
+    loading.value = false
   }
-])
+}
 
 // Computed
 const parentCategories = computed(() => {
@@ -486,29 +402,36 @@ const editCategory = (category) => {
   showEditModal.value = true
 }
 
-const deleteCategory = (id) => {
+const deleteCategory = async (id) => {
   if (confirm('Are you sure you want to delete this category? This action cannot be undone.')) {
-    categories.value = categories.value.filter(cat => cat.id !== id)
+    try {
+      await categoryService.deleteCategory(id)
+      await fetchCategories()
+    } catch (error) {
+      console.error('Error deleting category:', error)
+      alert('Failed to delete category')
+    }
   }
 }
 
-const saveCategory = () => {
-  if (showEditModal.value) {
-    // Update existing category
-    const index = categories.value.findIndex(cat => cat.id === formData.value.id)
-    if (index !== -1) {
-      categories.value[index] = { ...formData.value }
+const saveCategory = async () => {
+  try {
+    loading.value = true
+    if (showEditModal.value) {
+      // Update existing category
+      await categoryService.updateCategory(formData.value.id, formData.value)
+    } else {
+      // Add new category
+      await categoryService.createCategory(formData.value)
     }
-  } else {
-    // Add new category
-    const newCategory = {
-      ...formData.value,
-      id: Date.now(),
-      products_count: 0
-    }
-    categories.value.push(newCategory)
+    await fetchCategories()
+    closeModal()
+  } catch (error) {
+    console.error('Error saving category:', error)
+    alert('Failed to save category')
+  } finally {
+    loading.value = false
   }
-  closeModal()
 }
 
 const closeModal = () => {
@@ -524,4 +447,9 @@ const closeModal = () => {
     description: ''
   }
 }
+
+// Load data on mount
+onMounted(() => {
+  fetchCategories()
+})
 </script>

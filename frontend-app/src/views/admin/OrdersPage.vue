@@ -92,15 +92,15 @@
               class="hover:bg-gray-50"
             >
               <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm font-medium text-gray-900">{{ order.orderNumber }}</div>
+                <div class="text-sm font-medium text-gray-900">{{ order.order_number || order.orderNumber }}</div>
                 <div class="text-sm text-gray-500">{{ order.itemsCount }} items</div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">{{ order.customer }}</div>
-                <div class="text-sm text-gray-500">{{ order.email }}</div>
+                <div class="text-sm text-gray-900">{{ getCustomerName(order) }}</div>
+                <div class="text-sm text-gray-500">{{ order.email || order.user?.email || 'N/A' }}</div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                {{ formatDate(order.date) }}
+                {{ formatDate(order.created_at || order.date) }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="text-sm font-semibold text-xerxia-wine">₱{{ formatNumber(order.total) }}</div>
@@ -108,7 +108,7 @@
               <td class="px-6 py-4 whitespace-nowrap">
                 <select
                   v-model="order.status"
-                  @change="updateOrderStatus(order)"
+                  @change="updateOrderStatus(order, order.status)"
                   :class="getStatusClass(order.status)"
                   class="px-2 py-1 text-xs font-semibold rounded-full border-0 cursor-pointer"
                 >
@@ -247,8 +247,9 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import AdminLayout from '../../layouts/AdminLayout.vue'
+import { adminService } from '../../services/admin'
 
 // Search and filters
 const searchQuery = ref('')
@@ -259,121 +260,60 @@ const filterDate = ref('')
 const showOrderModal = ref(false)
 const selectedOrder = ref({})
 
+// Loading state
+const loading = ref(false)
+
 // Order stats
 const orderStats = ref({
-  pending: 45,
-  processing: 82,
-  shipped: 134,
-  delivered: 2891,
-  cancelled: 95
+  pending: 0,
+  processing: 0,
+  shipped: 0,
+  delivered: 0,
+  cancelled: 0
 })
 
-// Mock orders data
-const orders = ref([
-  {
-    id: 1,
-    orderNumber: 'ORD-2024-156',
-    customer: 'Juan Dela Cruz',
-    email: 'juan@example.com',
-    phone: '+63 912 345 6789',
-    address: '123 Makati Avenue, Makati, Metro Manila',
-    date: '2024-10-12',
-    itemsCount: 3,
-    total: 5971,
-    subtotal: 5197,
-    shipping: 150,
-    tax: 624,
-    status: 'processing',
-    items: [
-      { id: 1, name: 'Merlot Reserve 2020', quantity: 2, price: 1599, image: 'https://picsum.photos/seed/wine1/100/100' },
-      { id: 2, name: 'Cabernet Sauvignon', quantity: 1, price: 1299, image: 'https://picsum.photos/seed/wine2/100/100' },
-      { id: 3, name: 'Chardonnay Classic', quantity: 1, price: 999, image: 'https://picsum.photos/seed/wine3/100/100' }
-    ]
-  },
-  {
-    id: 2,
-    orderNumber: 'ORD-2024-155',
-    customer: 'Maria Santos',
-    email: 'maria@example.com',
-    phone: '+63 923 456 7890',
-    address: '456 Quezon Avenue, Quezon City, Metro Manila',
-    date: '2024-10-11',
-    itemsCount: 2,
-    total: 3899,
-    subtotal: 3498,
-    shipping: 150,
-    tax: 251,
-    status: 'shipped',
-    items: [
-      { id: 1, name: 'Champagne Deluxe', quantity: 1, price: 2599, image: 'https://picsum.photos/seed/wine4/100/100' },
-      { id: 2, name: 'Sparkling Wine', quantity: 1, price: 899, image: 'https://picsum.photos/seed/wine5/100/100' }
-    ]
-  },
-  {
-    id: 3,
-    orderNumber: 'ORD-2024-154',
-    customer: 'Pedro Reyes',
-    email: 'pedro@example.com',
-    phone: '+63 934 567 8901',
-    address: '789 Roxas Blvd, Pasay, Metro Manila',
-    date: '2024-10-10',
-    itemsCount: 4,
-    total: 8499,
-    subtotal: 7396,
-    shipping: 350,
-    tax: 753,
-    status: 'delivered',
-    items: [
-      { id: 1, name: 'Pinot Noir Vintage', quantity: 2, price: 1799, image: 'https://picsum.photos/seed/wine6/100/100' },
-      { id: 2, name: 'Rosé Wine Special', quantity: 2, price: 1199, image: 'https://picsum.photos/seed/wine7/100/100' }
-    ]
-  },
-  {
-    id: 4,
-    orderNumber: 'ORD-2024-153',
-    customer: 'Ana Garcia',
-    email: 'ana@example.com',
-    phone: '+63 945 678 9012',
-    address: '321 Ortigas Avenue, Pasig, Metro Manila',
-    date: '2024-10-13',
-    itemsCount: 1,
-    total: 1299,
-    subtotal: 1099,
-    shipping: 150,
-    tax: 50,
-    status: 'pending',
-    items: [
-      { id: 1, name: 'Port Wine Special', quantity: 1, price: 1099, image: 'https://picsum.photos/seed/wine8/100/100' }
-    ]
-  },
-  {
-    id: 5,
-    orderNumber: 'ORD-2024-152',
-    customer: 'Carlos Lopez',
-    email: 'carlos@example.com',
-    phone: '+63 956 789 0123',
-    address: '654 Shaw Blvd, Mandaluyong, Metro Manila',
-    date: '2024-10-09',
-    itemsCount: 2,
-    total: 4299,
-    subtotal: 3698,
-    shipping: 350,
-    tax: 251,
-    status: 'processing',
-    items: [
-      { id: 1, name: 'Merlot Reserve 2020', quantity: 1, price: 1599, image: 'https://picsum.photos/seed/wine1/100/100' },
-      { id: 2, name: 'Cabernet Sauvignon', quantity: 1, price: 1299, image: 'https://picsum.photos/seed/wine2/100/100' }
-    ]
+// Orders data from API
+const orders = ref([])
+
+// Fetch orders from API
+const fetchOrders = async () => {
+  try {
+    loading.value = true
+    const response = await adminService.getOrders({
+      search: searchQuery.value || undefined,
+      status: filterStatus.value || undefined,
+      date: filterDate.value || undefined
+    })
+    
+    orders.value = (response.data || response).map(order => ({
+      ...order,
+      itemsCount: order.items?.length || order.order_items?.length || 0,
+      items: order.items || order.order_items || []
+    }))
+    
+    // Calculate stats
+    orderStats.value = {
+      pending: orders.value.filter(o => o.status === 'pending').length,
+      processing: orders.value.filter(o => o.status === 'processing').length,
+      shipped: orders.value.filter(o => o.status === 'shipped').length,
+      delivered: orders.value.filter(o => o.status === 'delivered').length,
+      cancelled: orders.value.filter(o => o.status === 'cancelled').length
+    }
+  } catch (error) {
+    console.error('Error fetching orders:', error)
+  } finally {
+    loading.value = false
   }
-])
+}
 
 // Filtered orders
 const filteredOrders = computed(() => {
   return orders.value.filter(order => {
-    const matchesSearch = order.orderNumber.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-                          order.customer.toLowerCase().includes(searchQuery.value.toLowerCase())
+    const matchesSearch = order.order_number?.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+                          order.customer?.name?.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+                          order.user?.name?.toLowerCase().includes(searchQuery.value.toLowerCase())
     const matchesStatus = !filterStatus.value || order.status === filterStatus.value
-    const matchesDate = !filterDate.value || order.date === filterDate.value
+    const matchesDate = !filterDate.value || order.created_at?.startsWith(filterDate.value)
     
     return matchesSearch && matchesStatus && matchesDate
   })
@@ -384,21 +324,27 @@ const viewOrder = (order) => {
   showOrderModal.value = true
 }
 
-const updateOrderStatus = (order) => {
-  console.log('Order status updated:', order)
-  // In real app, make API call to update order status
+const updateOrderStatus = async (order, newStatus) => {
+  try {
+    await adminService.updateOrderStatus(order.id, newStatus)
+    await fetchOrders()
+  } catch (error) {
+    console.error('Error updating order status:', error)
+    alert('Failed to update order status')
+  }
 }
 
 const printInvoice = (order) => {
-  console.log('Print invoice for:', order.orderNumber)
-  // In real app, generate and print invoice
+  console.log('Print invoice for:', order.order_number || order.orderNumber)
+  window.print()
 }
 
 const formatNumber = (num) => {
-  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  return num?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') || '0'
 }
 
 const formatDate = (dateString) => {
+  if (!dateString) return 'N/A'
   const date = new Date(dateString)
   return date.toLocaleDateString('en-PH', {
     year: 'numeric',
@@ -417,4 +363,13 @@ const getStatusClass = (status) => {
   }
   return classes[status] || 'bg-gray-100 text-gray-800'
 }
+
+const getCustomerName = (order) => {
+  return order.customer?.name || order.user?.name || order.customer || 'N/A'
+}
+
+// Load data on mount
+onMounted(() => {
+  fetchOrders()
+})
 </script>

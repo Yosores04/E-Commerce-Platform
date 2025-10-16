@@ -196,7 +196,7 @@
                 </span>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                {{ formatDate(user.joined_date) }}
+                {{ formatDate(user.created_at || user.joined_date) }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <span
@@ -377,8 +377,9 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import AdminLayout from '../../layouts/AdminLayout.vue'
+import { adminService } from '../../services/admin'
 
 // State
 const activeTab = ref('all')
@@ -388,6 +389,9 @@ const filterStatus = ref('')
 // Modals
 const showAddModal = ref(false)
 const showEditModal = ref(false)
+
+// Loading state
+const loading = ref(false)
 
 // Form data
 const formData = ref({
@@ -399,81 +403,46 @@ const formData = ref({
   password: ''
 })
 
-// Mock users data
-const users = ref([
-  {
-    id: 1,
-    name: 'Juan Dela Cruz',
-    email: 'juan@example.com',
-    role: 'vendor',
-    status: 'active',
-    joined_date: '2024-08-15',
-    phone: '+63 912 345 6789'
-  },
-  {
-    id: 2,
-    name: 'Maria Santos',
-    email: 'maria@example.com',
-    role: 'customer',
-    status: 'active',
-    joined_date: '2024-09-20',
-    phone: '+63 923 456 7890'
-  },
-  {
-    id: 3,
-    name: 'Pedro Reyes',
-    email: 'pedro@example.com',
-    role: 'vendor',
-    status: 'pending',
-    joined_date: '2024-10-01',
-    phone: '+63 934 567 8901'
-  },
-  {
-    id: 4,
-    name: 'Ana Garcia',
-    email: 'ana@example.com',
-    role: 'customer',
-    status: 'active',
-    joined_date: '2024-09-10',
-    phone: '+63 945 678 9012'
-  },
-  {
-    id: 5,
-    name: 'Carlos Lopez',
-    email: 'carlos@example.com',
-    role: 'vendor',
-    status: 'active',
-    joined_date: '2024-07-25',
-    phone: '+63 956 789 0123'
-  },
-  {
-    id: 6,
-    name: 'Rosa Martinez',
-    email: 'rosa@example.com',
-    role: 'customer',
-    status: 'active',
-    joined_date: '2024-10-05',
-    phone: '+63 967 890 1234'
-  },
-  {
-    id: 7,
-    name: 'Miguel Torres',
-    email: 'miguel@example.com',
-    role: 'vendor',
-    status: 'pending',
-    joined_date: '2024-10-12',
-    phone: '+63 978 901 2345'
-  },
-  {
-    id: 8,
-    name: 'Admin User',
-    email: 'admin@xerxia.com',
-    role: 'admin',
-    status: 'active',
-    joined_date: '2024-01-01',
-    phone: '+63 900 000 0000'
+// Users data from API
+const users = ref([])
+
+// Fetch users from API
+const fetchUsers = async () => {
+  try {
+    loading.value = true
+    const response = await adminService.getUsers()
+    users.value = response.data || response
+  } catch (error) {
+    console.error('Error fetching users:', error)
+  } finally {
+    loading.value = false
   }
-])
+}
+
+// Fetch vendors from API
+const fetchVendors = async () => {
+  try {
+    loading.value = true
+    const response = await adminService.getVendors()
+    const vendors = response.data || response
+    // Add vendors to users list with role='vendor'
+    const vendorUsers = vendors.map(v => ({
+      ...v,
+      role: 'vendor',
+      joined_date: v.created_at
+    }))
+    users.value = [...users.value, ...vendorUsers]
+  } catch (error) {
+    console.error('Error fetching vendors:', error)
+  } finally {
+    loading.value = false
+  }
+}
+
+// Fetch all data
+const fetchAllData = async () => {
+  await Promise.all([fetchUsers(), fetchVendors()])
+}
 
 // Computed
 const vendorStats = computed(() => {
@@ -516,36 +485,49 @@ const editUser = (user) => {
   showEditModal.value = true
 }
 
-const approveVendor = (userId) => {
-  const user = users.value.find(u => u.id === userId)
-  if (user) {
-    user.status = 'active'
+const approveVendor = async (userId) => {
+  try {
+    await adminService.approveVendor(userId)
+    await fetchAllData()
+  } catch (error) {
+    console.error('Error approving vendor:', error)
+    alert('Failed to approve vendor')
   }
 }
 
-const suspendUser = (userId) => {
-  const user = users.value.find(u => u.id === userId)
-  if (user) {
-    user.status = user.status === 'suspended' ? 'active' : 'suspended'
+const suspendUser = async (userId) => {
+  try {
+    const user = users.value.find(u => u.id === userId)
+    if (user?.role === 'vendor') {
+      await adminService.suspendVendor(userId)
+    } else {
+      // For non-vendor users, implement user suspension API call if available
+      console.warn('User suspension not implemented yet')
+    }
+    await fetchAllData()
+  } catch (error) {
+    console.error('Error suspending user:', error)
+    alert('Failed to suspend user')
   }
 }
 
-const saveUser = () => {
-  if (showEditModal.value) {
-    const index = users.value.findIndex(u => u.id === formData.value.id)
-    if (index !== -1) {
-      users.value[index] = { ...formData.value }
+const saveUser = async () => {
+  try {
+    if (showEditModal.value) {
+      // Update existing user - implement when backend API is available
+      console.warn('User update not implemented yet')
+      // await adminService.updateUser(formData.value.id, formData.value)
+    } else {
+      // Create new user - implement when backend API is available
+      console.warn('User creation not implemented yet')
+      // await adminService.createUser(formData.value)
     }
-  } else {
-    const newUser = {
-      ...formData.value,
-      id: Date.now(),
-      joined_date: new Date().toISOString().split('T')[0]
-    }
-    delete newUser.password
-    users.value.push(newUser)
+    await fetchAllData()
+    closeModal()
+  } catch (error) {
+    console.error('Error saving user:', error)
+    alert('Failed to save user')
   }
-  closeModal()
 }
 
 const closeModal = () => {
@@ -588,4 +570,9 @@ const getStatusClass = (status) => {
   }
   return classes[status] || 'bg-gray-100 text-gray-800'
 }
+
+// Load data on mount
+onMounted(() => {
+  fetchAllData()
+})
 </script>
