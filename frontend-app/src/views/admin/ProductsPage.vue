@@ -33,10 +33,9 @@
             class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-xerxia-wine focus:border-xerxia-wine"
           >
             <option value="">All Categories</option>
-            <option value="Red Wine">Red Wine</option>
-            <option value="White Wine">White Wine</option>
-            <option value="Sparkling">Sparkling</option>
-            <option value="Rosé">Rosé</option>
+            <option v-for="category in categories" :key="category.id" :value="category.id">
+              {{ category.name }}
+            </option>
           </select>
           <select
             v-model="filterStatus"
@@ -45,7 +44,6 @@
             <option value="">All Status</option>
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
-            <option value="out-of-stock">Out of Stock</option>
           </select>
         </div>
       </div>
