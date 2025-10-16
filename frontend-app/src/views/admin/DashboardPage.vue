@@ -1,23 +1,6 @@
 <template>
-  <DefaultLayout>
-    <div class="bg-whitesmoke min-h-screen">
-      <!-- Page Header -->
-      <div class="bg-gradient-to-r from-wine via-burgundy to-wine text-white">
-        <div class="container mx-auto px-4 py-8">
-          <div class="flex items-center justify-between">
-            <div>
-              <h1 class="text-3xl font-bold mb-2">Admin Dashboard</h1>
-              <p class="text-white/90">Welcome back, Admin</p>
-            </div>
-            <div class="text-right">
-              <p class="text-sm text-white/80">{{ currentDate }}</p>
-              <p class="text-sm text-white/80">{{ currentTime }}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    <div class="container mx-auto px-4 py-8">
+  <AdminLayout>
+    <div class="p-8">
       <!-- Stats Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <!-- Total Revenue -->
@@ -268,18 +251,14 @@
         </router-link>
       </div>
     </div>
-    </div>
-  </DefaultLayout>
+  </AdminLayout>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
-import DefaultLayout from '../../layouts/DefaultLayout.vue'
+import { ref, onMounted } from 'vue'
+import AdminLayout from '../../layouts/AdminLayout.vue'
 import { adminService } from '../../services/admin'
 
-// Current date and time
-const currentDate = ref('')
-const currentTime = ref('')
 const isLoading = ref(false)
 
 // Stats
@@ -305,22 +284,6 @@ const recentOrders = ref([])
 
 // Top products
 const topProducts = ref([])
-
-// Update time
-let timeInterval = null
-
-const updateTime = () => {
-  const now = new Date()
-  currentDate.value = now.toLocaleDateString('en-PH', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  })
-  currentTime.value = now.toLocaleTimeString('en-PH', {
-    hour: '2-digit',
-    minute: '2-digit'
-  })
-}
 
 const loadDashboardData = async () => {
   isLoading.value = true
@@ -374,15 +337,7 @@ const loadDashboardData = async () => {
 }
 
 onMounted(async () => {
-  updateTime()
-  timeInterval = setInterval(updateTime, 1000)
   await loadDashboardData()
-})
-
-onUnmounted(() => {
-  if (timeInterval) {
-    clearInterval(timeInterval)
-  }
 })
 
 const formatNumber = (num) => {
