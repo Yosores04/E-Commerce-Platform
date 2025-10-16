@@ -1,6 +1,16 @@
 <template>
   <AdminLayout>
     <div class="p-8">
+      <!-- Debug Info -->
+      <div class="bg-gray-100 border border-gray-300 rounded-lg p-4 mb-4 text-sm">
+        <p><strong>Debug Info:</strong></p>
+        <p>Products Count: {{ products.length }}</p>
+        <p>Loading: {{ loading }}</p>
+        <p>Error: {{ error || 'None' }}</p>
+        <p>Categories Count: {{ categories.length }}</p>
+        <p>API Base URL: http://127.0.0.1:8000/api</p>
+      </div>
+      
       <!-- Page Header -->
       <div class="mb-6 flex items-center justify-between">
         <div>
@@ -48,6 +58,17 @@
             <option value="out-of-stock">Out of Stock</option>
           </select>
         </div>
+      </div>
+
+      <!-- Loading State -->
+      <div v-if="loading" class="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded-lg mb-6">
+        <p class="font-medium">Loading products...</p>
+      </div>
+
+      <!-- Error State -->
+      <div v-if="error" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+        <p class="font-medium">{{ error }}</p>
+        <button @click="fetchProducts" class="mt-2 text-sm underline">Try Again</button>
       </div>
 
       <!-- Products Table -->
@@ -341,11 +362,15 @@ const fetchProducts = async () => {
   try {
     loading.value = true
     error.value = null
+    console.log('Fetching products from API...')
     const response = await productService.getProducts()
+    console.log('Products API response:', response)
     products.value = response.data || response
+    console.log('Products loaded:', products.value.length)
   } catch (err) {
     console.error('Error fetching products:', err)
-    error.value = 'Failed to load products'
+    console.error('Error details:', err.response?.data || err.message)
+    error.value = `Failed to load products: ${err.response?.data?.message || err.message}`
   } finally {
     loading.value = false
   }

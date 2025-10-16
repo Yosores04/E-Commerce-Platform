@@ -60,6 +60,11 @@
         </div>
       </div>
 
+      <!-- Loading State -->
+      <div v-if="loading" class="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded-lg mb-6">
+        <p class="font-medium">Loading orders...</p>
+      </div>
+
       <!-- Orders Table -->
       <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
         <table class="min-w-full divide-y divide-gray-200">
@@ -279,17 +284,20 @@ const orders = ref([])
 const fetchOrders = async () => {
   try {
     loading.value = true
+    console.log('Fetching orders from API...')
     const response = await adminService.getOrders({
       search: searchQuery.value || undefined,
       status: filterStatus.value || undefined,
       date: filterDate.value || undefined
     })
     
+    console.log('Orders API response:', response)
     orders.value = (response.data || response).map(order => ({
       ...order,
       itemsCount: order.items?.length || order.order_items?.length || 0,
       items: order.items || order.order_items || []
     }))
+    console.log('Orders loaded:', orders.value.length)
     
     // Calculate stats
     orderStats.value = {
