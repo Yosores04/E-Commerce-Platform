@@ -23,7 +23,7 @@ class DashboardController extends Controller
     {
         // Total Revenue
         $totalRevenue = Order::whereIn('status', ['delivered', 'completed'])
-            ->sum('total_amount');
+            ->sum('total');
 
         // Total Orders
         $totalOrders = Order::count();
@@ -50,7 +50,7 @@ class DashboardController extends Controller
             $revenue = Order::whereIn('status', ['delivered', 'completed'])
                 ->whereYear('created_at', $month->year)
                 ->whereMonth('created_at', $month->month)
-                ->sum('total_amount');
+                ->sum('total');
             $revenueByMonth[] = [
                 'month' => $month->format('M'),
                 'year' => $month->format('Y'),
@@ -68,7 +68,7 @@ class DashboardController extends Controller
                     'id' => $order->id,
                     'order_number' => $order->order_number,
                     'customer' => $order->user->name ?? 'Guest',
-                    'total' => (float) $order->total_amount,
+                    'total' => (float) $order->total,
                     'status' => $order->status,
                     'date' => $order->created_at->format('Y-m-d H:i:s'),
                     'items_count' => $order->items->count()
@@ -150,7 +150,7 @@ class DashboardController extends Controller
         return (float) Order::whereIn('status', ['delivered', 'completed'])
             ->whereYear('created_at', Carbon::now()->subMonth()->year)
             ->whereMonth('created_at', Carbon::now()->subMonth()->month)
-            ->sum('total_amount');
+            ->sum('total');
     }
 
     /**
@@ -161,7 +161,7 @@ class DashboardController extends Controller
         $current = Order::whereIn('status', ['delivered', 'completed'])
             ->whereYear('created_at', Carbon::now()->year)
             ->whereMonth('created_at', Carbon::now()->month)
-            ->sum('total_amount');
+            ->sum('total');
 
         $previous = $this->getPreviousMonthRevenue();
 
