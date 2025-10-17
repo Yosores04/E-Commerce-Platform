@@ -289,9 +289,13 @@ const loadDashboardData = async () => {
   isLoading.value = true
   try {
     const response = await adminService.getDashboardStats()
+    console.log('Dashboard API Response:', response)
     
     if (response.success && response.data) {
       const data = response.data
+      console.log('Dashboard Data:', data)
+      console.log('Total Products:', data.totalProducts)
+      console.log('Total Users:', data.totalUsers)
       
       // Update stats
       stats.value = {
